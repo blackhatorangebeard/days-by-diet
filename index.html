@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Days by Diet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .section-title {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .table-container {
+            background-color: #2a2a2a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #3a3a3a;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #4a4a4a;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 6px 12px;
+            border: 1px solid #4a4a4a;
+            background-color: #2a2a2a;
+        }
+
+        .food-item-input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            width: 100%;
+            font-size: 13px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .points-cell {
+            width: 80px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .meal-header {
+            background-color: #2a2a2a;
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .meal-header input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-weight: bold;
+            width: 100%;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+        }
+
+        .calculate-button {
+            background-color: #660000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .calculate-button:hover {
+            background-color: #aa0000;
+        }
+
+        .total-row {
+            background-color: #2a2a2a;
+            font-weight: bold;
+        }
+
+        .annual-table {
+            margin-top: 0px;
+        }
+
+        .annual-table th {
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+
+        .annual-table td {
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        .person-input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            width: 100%;
+            font-size: 11px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .summary {
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .summary ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .summary li:before {
+            content: "• ";
+            margin-right: 5px;
+        }
+
+        .right-column {
+            padding-left: 20px;
+        }
+
+        .daily-score, .annual-total, .equivalent-time {
+            text-align: center;
+        }
+
+        .empty-cell {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Column - Food Entry -->
+        <div class="left-column">
+            <h1 class="section-title">DIET IN LAST 24 HOURS</h1>
+            <div class="table-container">
+                <table id="foodTable">
+                    <thead>
+                        <tr>
+                            <th>Food Item</th>
+                            <th>Minutes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foodTableBody">
+                        <tr class="meal-header">
+                            <td><input type="text" class="food-item-input" value="BREAKFAST" style="font-weight: bold;"></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="food-item-input" placeholder="Enter food item..."></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr class="meal-header">
+                            <td><input type="text" class="food-item-input" value="LUNCH" style="font-weight: bold;"></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="food-item-input" placeholder=""></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr class="meal-header">
+                            <td><input type="text" class="food-item-input" value="DINNER" style="font-weight: bold;"></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="food-item-input" placeholder=""></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr class="meal-header">
+                            <td><input type="text" class="food-item-input" value="SNACKS, SUPPLEMENTS, EXTRA" style="font-weight: bold;"></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="food-item-input" placeholder=""></td>
+                            <td class="points-cell"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="calculate-button" onclick="calculateTotal()">CALCULATE TOTAL</button>
+            </div>
+        </div>
+
+        <!-- Right Column - Annual Calculations -->
+        <div class="right-column">
+            <h1 class="section-title">ANNUAL LIFE MINUTES CALCULATION:</h1>
+            <div class="table-container">
+                <table class="annual-table">
+                    <thead>
+                        <tr>
+                            <th>Person</th>
+                            <th>Daily Score</th>
+                            <th>Annual Total</th>
+                            <th>Equivalent Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="person-input" value="[Name]" id="personName"></td>
+                            <td class="daily-score" id="dailyScore"></td>
+                            <td class="annual-total" id="annualTotal"></td>
+                            <td class="equivalent-time" id="equivalentTime"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="summary">
+                    <strong>Summary:</strong>
+                    <ul id="summaryList">
+                        <!-- Summary will be populated after calculation -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ENHANCED FOOD DATABASE WITH PORTIONS AND QUANTITIES
+        const foodDatabase = {
+            // ULTRA-PROCESSED FOODS (negative points)
+            'hot dog': -36, 'hot dogs': -36,
+            'soft drink': -12, 'soft drinks': -12, 'soda': -12, 'coke': -12, 'pepsi': -12,
+            'diet coke': -6, 'coke zero': -6, 'diet soda': -6,
+            'cheeseburger': -9, 'hamburger': -8, 'burger': -8,
+            'french fries': -8, 'fries': -8, 'chips': -5,
+            'pizza': -7, 'frozen pizza': -8,
+            'candy': -6, 'chocolate bar': -5, 'milk chocolate': -4,
+            'ice cream': -6, 'gelato': -5,
+            'cookies': -5, 'biscuits': -4,
+            'cake': -5, 'cupcake': -4,
+            'donut': -5, 'doughnut': -5, 'muffin': -4,
+            'white bread': -3, 'processed bread': -3,
+            'processed meat': -8, 'bacon': -6, 'sausage': -6, 'salami': -5,
+            'energy drink': -8, 'red bull': -8,
+            'instant noodles': -3, 'ramen': -3,
+            
+            // HEALTHY FOODS (positive points)
+            'leafy greens': 8, 'spinach': 8, 'kale': 8, 'arugula': 8, 'lettuce': 6,
+            'berries': 7, 'blueberries': 7, 'strawberries': 7, 'raspberries': 7, 'blackberries': 7,
+            'nuts': 6, 'almonds': 6, 'walnuts': 6, 'pistachios': 6, 'pecans': 5,
+            'salmon': 6, 'fish': 5, 'tuna': 5, 'sardines': 6, 'mackerel': 6,
+            'avocado': 5, 'olive oil': 4, 'extra virgin olive oil': 5,
+            'beans': 5, 'lentils': 5, 'chickpeas': 4, 'black beans': 5,
+            'quinoa': 4, 'brown rice': 2, 'wild rice': 3,
+            'sweet potato': 4, 'yam': 3,
+            'broccoli': 5, 'cauliflower': 4, 'brussels sprouts': 4,
+            'tomatoes': 3, 'cherry tomatoes': 3,
+            'carrots': 3, 'bell peppers': 2, 'cucumber': 2, 'celery': 2,
+            'apple': 3, 'banana': 2, 'orange': 3, 'grapefruit': 3,
+            'greek yogurt': 4, 'plain yogurt': 3, 'kefir': 4,
+            'eggs': 3, 'egg whites': 2,
+            'chicken breast': 3, 'turkey': 3, 'lean beef': 2,
+            'brisket': 2, 'steak': 2, 'ground beef': 1,
+            'oatmeal': 3, 'steel cut oats': 4,
+            'green tea': 2, 'herbal tea': 1,
+            'coffee': 1, 'black coffee': 1,
+            'dark chocolate': 2, '85% dark chocolate': 3,
+            'kimchi': 3, 'sauerkraut': 2,
+            'garlic': 1, 'onion': 1, 'ginger': 1,
+            
+            // NEUTRAL/MIXED FOODS
+            'white rice': -0.5, 'pasta': -0.5, 'whole wheat pasta': 1,
+            'milk': 0, 'whole milk': 0, 'skim milk': 1,
+            'cheese': -1, 'cheddar cheese': -1.4, 'mozzarella': -1,
+            'butter': -2, 'margarine': -3,
+            
+            // BEVERAGES WITH DOSE-RESPONSE
+            'red wine': 2, 'white wine': 1, 'wine': 2,
+            'beer': -2, 'light beer': -1,
+            'whiskey': -3, 'vodka': -3, 'gin': -3,
+            'water': 0.5,
+            
+            // SUPPLEMENTS (positive points)
+            'fish oil': 4, 'omega 3': 4, 'omega-3': 4,
+            'vitamin d': 3, 'vitamin d3': 3,
+            'vitamin c': 2, 'magnesium': 1, 'zinc': 1,
+            'probiotics': 3, 'multivitamin': 2,
+            'iron': 1, 'calcium': 1, 'vitamin b12': 2,
+            'folate': 1, 'folic acid': 1, 'biotin': 1,
+            'vitamin e': 1, 'coq10': 2, 'turmeric': 2,
+            'curcumin': 2, 'ashwagandha': 1, 'echinacea': 1,
+            'andrographis': 1, 'iodine': 1
+        };
+
+        // DOSE-RESPONSE CURVES FOR SPECIFIC FOODS
+        const doseResponseRules = {
+            'red wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 2, penalty: -4 },
+            'white wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 1, penalty: -3 },
+            'wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 2, penalty: -4 },
+            'coffee': { beneficial: 3, neutral: 4, harmful: 6, maxBenefit: 3, penalty: -1 },
+            'black coffee': { beneficial: 3, neutral: 4, harmful: 6, maxBenefit: 3, penalty: -1 },
+            'green tea': { beneficial: 5, neutral: 8, harmful: 12, maxBenefit: 10, penalty: -0.5 },
+            'dark chocolate': { beneficial: 2, neutral: 4, harmful: 8, maxBenefit: 4, penalty: -2 },
+            'nuts': { beneficial: 3, neutral: 6, harmful: 10, maxBenefit: 6, penalty: -1 },
+            'beer': { beneficial: 0, neutral: 1, harmful: 2, maxBenefit: -1, penalty: -3 }
+        };
+
+        // PORTION SIZE MULTIPLIERS
+        const portionMultipliers = {
+            // Weight units (per 100g base)
+            'g': 0.01, 'gram': 0.01, 'grams': 0.01,
+            'kg': 10, 'kilogram': 10, 'kilograms': 10,
+            'oz': 0.28, 'ounce': 0.28, 'ounces': 0.28,
+            'lb': 4.5, 'pound': 4.5, 'pounds': 4.5,
+            
+            // Volume units (per standard serving)
+            'ml': 0.004, 'milliliter': 0.004, 'milliliters': 0.004,
+            'l': 4, 'liter': 4, 'liters': 4, 'litre': 4, 'litres': 4,
+            'cup': 1, 'cups': 1,
+            'glass': 1, 'glasses': 1,
+            'bottle': 3, 'bottles': 3,
+            'can': 1, 'cans': 1,
+            'tbsp': 0.25, 'tablespoon': 0.25, 'tablespoons': 0.25,
+            'tsp': 0.08, 'teaspoon': 0.08, 'teaspoons': 0.08,
+            
+            // Count units
+            'x': 1, '×': 1, 'piece': 1, 'pieces': 1,
+            'slice': 0.5, 'slices': 0.5,
+            'serving': 1, 'servings': 1,
+            'handful': 1, 'handfuls': 1
+        };
+
+        let calculationDone = false;
+
+        function addNewRowAfter(currentRow) {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="food-item-input" placeholder=""></td>
+                <td class="points-cell"></td>
+            `;
+            
+            // Insert the new row after the current row
+            currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
+            
+            // Add event listeners to the new input
+            const newInput = newRow.querySelector('.food-item-input');
+            newInput.addEventListener('input', handleFoodInput);
+            newInput.addEventListener('keypress', handleKeyPress);
+            
+            return newRow;
+        }
+
+        function handleFoodInput(event) {
+            const input = event.target;
+            const value = input.value.trim();
+            const currentRow = input.closest('tr');
+            
+            // Don't process meal headers
+            if (currentRow.classList.contains('meal-header')) {
+                return;
+            }
+            
+            // If user typed something in a food item row, check if we need to add a new row
+            if (value && !hasEmptyRowAfter(currentRow)) {
+                addNewRowAfter(currentRow);
+            }
+        }
+
+        function hasEmptyRowAfter(currentRow) {
+            const nextRow = currentRow.nextElementSibling;
+            if (!nextRow) return false;
+            
+            // If next row is a meal header, we don't need an empty row
+            if (nextRow.classList.contains('meal-header')) return true;
+            
+            // Check if next row is empty
+            const nextInput = nextRow.querySelector('.food-item-input');
+            return nextInput && nextInput.value.trim() === '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const input = event.target;
+                const currentRow = input.closest('tr');
+                
+                // Don't handle Enter for meal headers
+                if (currentRow.classList.contains('meal-header')) {
+                    return;
+                }
+                
+                let nextRow = currentRow.nextElementSibling;
+                
+                // If no next row or next row is a meal header, create a new row after current
+                if (!nextRow || nextRow.classList.contains('meal-header')) {
+                    nextRow = addNewRowAfter(currentRow);
+                }
+                
+                // Focus on the next input
+                const nextInput = nextRow.querySelector('.food-item-input');
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+
+
+
+        // ENHANCED FOOD PARSING FUNCTION
+        function parseFood(input) {
+            if (!input || typeof input !== 'string') return null;
+            
+            const cleanInput = input.toLowerCase().trim();
+            
+            // Pattern to match quantity + unit + food
+            const quantityPattern = /^(\d+\.?\d*)\s*(x|×|g|grams?|kg|kilograms?|oz|ounces?|lb|pounds?|ml|milliliters?|l|liters?|litres?|cups?|glasses?|bottles?|cans?|tbsp|tablespoons?|tsp|teaspoons?|pieces?|slices?|servings?|handfuls?)\s+(.+)$/i;
+            
+            // Pattern to match just quantity + food (assume serving)
+            const simpleQuantityPattern = /^(\d+\.?\d*)\s+(.+)$/;
+            
+            let quantity = 1;
+            let unit = 'serving';
+            let foodName = cleanInput;
+            
+            const quantityMatch = cleanInput.match(quantityPattern);
+            if (quantityMatch) {
+                quantity = parseFloat(quantityMatch[1]);
+                unit = quantityMatch[2].toLowerCase();
+                foodName = quantityMatch[3].trim();
+            } else {
+                const simpleMatch = cleanInput.match(simpleQuantityPattern);
+                if (simpleMatch) {
+                    quantity = parseFloat(simpleMatch[1]);
+                    foodName = simpleMatch[2].trim();
+                }
+            }
+            
+            return { quantity, unit, foodName };
+        }
+
+        // FIND FOOD SCORE WITH FUZZY MATCHING
+        function findFoodScore(foodItem) {
+            if (!foodItem || typeof foodItem !== 'string') return 0;
+            
+            const item = foodItem.toLowerCase().trim();
+            
+            // Direct match
+            if (foodDatabase[item] !== undefined) {
+                return foodDatabase[item];
+            }
+            
+            // Partial match - check if any database key is contained in the input
+            for (const [key, value] of Object.entries(foodDatabase)) {
+                if (item.includes(key) || key.includes(item)) {
+                    return value;
+                }
+            }
+            
+            // Special handling for common variations
+            const variations = {
+                'coke zero': -6, 'diet coke': -6, 'zero coke': -6,
+                'french toast': -4, 'toast': -2,
+                'iced coffee': 1, 'cold brew': 1,
+                'protein shake': 2, 'whey protein': 2,
+                'green smoothie': 4, 'fruit smoothie': 1,
+                'caesar salad': 2, 'garden salad': 4, 'salad': 3
+            };
+            
+            for (const [variation, score] of Object.entries(variations)) {
+                if (item.includes(variation) || variation.includes(item)) {
+                    return score;
+                }
+            }
+            
+            // No match found
+            return 0;
+        }
+
+        // CALCULATE DOSE-RESPONSE EFFECTS
+        function calculateDoseResponse(baseScore, quantity, foodName) {
+            const rules = doseResponseRules[foodName];
+            if (!rules) return baseScore * quantity;
+            
+            if (quantity <= rules.beneficial) {
+                return baseScore * quantity;
+            } else if (quantity <= rules.neutral) {
+                return rules.maxBenefit;
+            } else {
+                const excessAmount = quantity - rules.neutral;
+                return rules.maxBenefit + (excessAmount * rules.penalty);
+            }
+        }
+
+        // ENHANCED FOOD CALCULATION WITH DETAILED BREAKDOWN
+        function calculateFoodScore(input) {
+            const parsed = parseFood(input);
+            if (!parsed) return { score: 0, breakdown: 'Invalid input' };
+            
+            const { quantity, unit, foodName } = parsed;
+            const baseScore = findFoodScore(foodName);
+            
+            if (baseScore === 0) {
+                return { 
+                    score: 0, 
+                    breakdown: `"${foodName}" not found in database`,
+                    confidence: 'unknown'
+                };
+            }
+            
+            // Apply portion multiplier
+            const portionMultiplier = portionMultipliers[unit] || 1;
+            const adjustedQuantity = quantity * portionMultiplier;
+            
+            // Apply dose-response curve
+            const finalScore = Math.round(calculateDoseResponse(baseScore, adjustedQuantity, foodName));
+            
+            // Create breakdown explanation
+            let breakdown = '';
+            if (quantity !== 1 || unit !== 'serving') {
+                if (doseResponseRules[foodName]) {
+                    if (adjustedQuantity <= doseResponseRules[foodName].beneficial) {
+                        breakdown = `${quantity} ${unit} - beneficial range`;
+                    } else if (adjustedQuantity <= doseResponseRules[foodName].neutral) {
+                        breakdown = `${quantity} ${unit} - neutral range (diminishing returns)`;
+                    } else {
+                        breakdown = `${quantity} ${unit} - excessive (negative effects)`;
+                    }
+                } else {
+                    breakdown = `${quantity} ${unit} × ${baseScore} base minutes`;
+                }
+            } else {
+                breakdown = `Standard serving`;
+            }
+            
+            return {
+                score: finalScore,
+                breakdown: breakdown,
+                confidence: 'verified'
+            };
+        }
+
+        // REPLACE THE EXISTING calculateTotal() FUNCTION WITH THIS:
+        function calculateTotal() {
+            const tbody = document.getElementById('foodTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            let totalPoints = 0;
+            let foodCount = 0;
+            let detailedBreakdown = [];
+
+            rows.forEach(row => {
+                const input = row.querySelector('.food-item-input');
+                const pointsCell = row.querySelector('.points-cell');
+                const foodInput = input.value.trim();
+                
+                if (foodInput && !row.classList.contains('meal-header')) {
+                    const result = calculateFoodScore(foodInput);
+                    
+                    if (result.score !== 0) {
+                        pointsCell.innerHTML = result.score > 0 ? 
+                            `<span style="color: #88cc88;">+${result.score}</span>` : 
+                            `<span style="color: #cc8888;">${result.score}</span>`;
+                        
+                        // Add tooltip with breakdown
+                        pointsCell.title = result.breakdown;
+                        
+                        totalPoints += result.score;
+                        foodCount++;
+                        
+                        detailedBreakdown.push({
+                            food: foodInput,
+                            score: result.score,
+                            breakdown: result.breakdown,
+                            confidence: result.confidence
+                        });
+                    } else {
+                        pointsCell.innerHTML = `<span style="color: #666666;">0*</span>`;
+                        pointsCell.title = result.breakdown || "Item not recognized";
+                    }
+                } else if (row.classList.contains('meal-header')) {
+                    pointsCell.textContent = '';
+                }
+            });
+
+            // Add total row if not exists
+            let totalRow = tbody.querySelector('.total-row');
+            if (!totalRow) {
+                totalRow = document.createElement('tr');
+                totalRow.classList.add('total-row');
+                totalRow.innerHTML = `
+                    <td style="font-weight: bold;">TOTAL</td>
+                    <td class="points-cell" style="font-weight: bold;"></td>
+                `;
+                tbody.appendChild(totalRow);
+            }
+
+            // Update total with color coding
+            const totalCell = totalRow.querySelector('.points-cell');
+            const totalColor = totalPoints > 0 ? '#88cc88' : totalPoints < 0 ? '#cc8888' : '#ffffff';
+            totalCell.innerHTML = `<span style="color: ${totalColor};">${totalPoints > 0 ? '+' : ''}${totalPoints} LIFE MINUTES</span>`;
+
+            // Update annual calculations
+            updateAnnualCalculations(totalPoints);
+            
+            // Log detailed breakdown for debugging
+            console.log('Detailed Food Breakdown:', detailedBreakdown);
+            
+            calculationDone = true;
+        }
+
+        function updateAnnualCalculations(dailyPoints) {
+            const annualPoints = dailyPoints * 365;
+            const equivalentDays = Math.round(annualPoints / (24 * 60) * 10) / 10; // Convert to days with 1 decimal
+            
+            document.getElementById('dailyScore').textContent = `${dailyPoints > 0 ? '+' : ''}${dailyPoints} minutes`;
+            document.getElementById('annualTotal').textContent = `${annualPoints > 0 ? '+' : ''}${annualPoints} minutes`;
+            
+            if (Math.abs(equivalentDays) >= 1) {
+                document.getElementById('equivalentTime').textContent = `${equivalentDays > 0 ? '+' : ''}${equivalentDays} ${Math.abs(equivalentDays) === 1 ? 'day' : 'days'} ${equivalentDays > 0 ? 'gained' : 'lost'}`;
+            } else {
+                const hours = Math.round(annualPoints / 60 * 10) / 10;
+                document.getElementById('equivalentTime').textContent = `${hours > 0 ? '+' : ''}${hours} ${Math.abs(hours) === 1 ? 'hour' : 'hours'} ${hours > 0 ? 'gained' : 'lost'}`;
+            }
+
+            // Update summary
+            const summaryList = document.getElementById('summaryList');
+            summaryList.innerHTML = '';
+            const summaryItem = document.createElement('li');
+            
+            if (equivalentDays > 0) {
+                summaryItem.textContent = `would gain over ${Math.abs(equivalentDays)} days of life per year`;
+            } else if (equivalentDays < 0) {
+                summaryItem.textContent = `would lose over ${Math.abs(equivalentDays)} days of life per year`;
+            } else {
+                summaryItem.textContent = `no significant impact on life expectancy`;
+            }
+            
+            summaryList.appendChild(summaryItem);
+        }
+
+        // Add event listeners to existing inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.food-item-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', handleFoodInput);
+                input.addEventListener('keypress', handleKeyPress);
+            });
+        });
+    </script>
+</body>
+</html>
+
