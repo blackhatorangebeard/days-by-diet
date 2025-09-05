@@ -198,7 +198,13 @@
                 padding: 16px 20px;
                 font-size: 16px;
                 margin-top: 20px;
+                margin-left: 0 !important;
                 min-height: 50px;
+                display: block;
+            }
+            
+            #addRowButton {
+                margin-top: 10px;
             }
         }
 
@@ -324,7 +330,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 25 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 26 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
@@ -369,6 +375,7 @@
                     </tbody>
                 </table>
                 <button class="calculate-button" onclick="calculateTotal()">CALCULATE TOTAL</button>
+                <button class="calculate-button" onclick="addRowToCurrentMeal()" style="background-color: #0066cc; margin-left: 10px;" id="addRowButton">+ ADD FOOD ITEM</button>
             </div>
         </div>
 
@@ -513,6 +520,8 @@
 
         let calculationDone = false;
         let debounceTimers = new Map(); // For debouncing mobile input events
+        let lastInputValues = new Map(); // Track previous input values for mobile
+        let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); // Detect mobile
 
         function addNewRowAfter(currentRow) {
             const newRow = document.createElement('tr');
@@ -537,9 +546,17 @@
             
             // Touch events for mobile devices
             newInput.addEventListener('touchend', handleMobileInput);
+            newInput.addEventListener('touchstart', handleMobileInput);
             
             // Composition events for mobile keyboards (especially iOS)
             newInput.addEventListener('compositionend', handleMobileInput);
+            
+            // Focus events for mobile - start monitoring when focused
+            newInput.addEventListener('focus', (e) => {
+                if (isMobile) {
+                    startPollingForInput(e.target, e.target.closest('tr'));
+                }
+            });
             
             return newRow;
         }
@@ -564,7 +581,7 @@
             }, 50); // Increased from 10ms to 50ms for mobile compatibility
         }
 
-        // New function specifically for mobile input handling with debouncing
+        // New function specifically for mobile input handling with multiple strategies
         function handleMobileInput(event) {
             const input = event.target;
             const currentRow = input.closest('tr');
@@ -574,24 +591,80 @@
                 return;
             }
             
-            // Create unique key for this input to debounce
-            const inputKey = currentRow.outerHTML;
+            // Strategy 1: Immediate check for some events
+            if (event.type === 'touchend' || event.type === 'compositionend') {
+                setTimeout(() => {
+                    checkAndAddRow(input, currentRow);
+                }, 50);
+            }
             
-            // Clear existing timer for this input
+            // Strategy 2: Debounced check for other events
+            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
+            
             if (debounceTimers.has(inputKey)) {
                 clearTimeout(debounceTimers.get(inputKey));
             }
             
-            // Set new debounced timer
             const timer = setTimeout(() => {
-                const currentValue = input.value.trim();
-                if (currentValue && !hasEmptyRowAfter(currentRow)) {
-                    addNewRowAfter(currentRow);
-                }
+                checkAndAddRow(input, currentRow);
                 debounceTimers.delete(inputKey);
-            }, 150); // Debounced delay for mobile
+            }, 200); // Longer delay for mobile
             
             debounceTimers.set(inputKey, timer);
+            
+            // Strategy 3: Start polling if on mobile device
+            if (isMobile) {
+                startPollingForInput(input, currentRow);
+            }
+        }
+
+        // Function to check and add row with better logic
+        function checkAndAddRow(input, currentRow) {
+            const currentValue = input.value.trim();
+            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
+            const lastValue = lastInputValues.get(inputKey) || '';
+            
+            // Only proceed if value actually changed and has content
+            if (currentValue !== lastValue && currentValue.length > 0 && !hasEmptyRowAfter(currentRow)) {
+                console.log('Adding new row after:', currentValue); // Debug log
+                addNewRowAfter(currentRow);
+            }
+            
+            // Update last known value
+            lastInputValues.set(inputKey, currentValue);
+        }
+
+        // Mobile polling fallback - checks input values periodically
+        function startPollingForInput(input, currentRow) {
+            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
+            
+            // Don't start multiple polling timers for same input
+            if (input.dataset.polling === 'true') {
+                return;
+            }
+            
+            input.dataset.polling = 'true';
+            
+            const pollInterval = setInterval(() => {
+                const currentValue = input.value.trim();
+                const lastValue = lastInputValues.get(inputKey) || '';
+                
+                if (currentValue !== lastValue) {
+                    checkAndAddRow(input, currentRow);
+                    
+                    // Stop polling after successful detection or if input loses focus
+                    if (currentValue.length > 0 || document.activeElement !== input) {
+                        clearInterval(pollInterval);
+                        input.dataset.polling = 'false';
+                    }
+                }
+            }, 300); // Poll every 300ms
+            
+            // Auto-stop polling after 10 seconds
+            setTimeout(() => {
+                clearInterval(pollInterval);
+                input.dataset.polling = 'false';
+            }, 10000);
         }
 
         function hasEmptyRowAfter(currentRow) {
@@ -876,6 +949,35 @@
             summaryList.appendChild(summaryItem);
         }
 
+        // Manual add row function for mobile fallback
+        function addRowToCurrentMeal() {
+            const tbody = document.getElementById('foodTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            let targetRow = null;
+            
+            // Find the last non-empty food item row to add after it
+            for (let i = rows.length - 1; i >= 0; i--) {
+                const row = rows[i];
+                const input = row.querySelector('.food-item-input');
+                if (input && !row.classList.contains('meal-header')) {
+                    targetRow = row;
+                    break;
+                }
+            }
+            
+            // If we found a target row, add a new row after it
+            if (targetRow) {
+                const newRow = addNewRowAfter(targetRow);
+                // Focus the new input
+                setTimeout(() => {
+                    const newInput = newRow.querySelector('.food-item-input');
+                    if (newInput) {
+                        newInput.focus();
+                    }
+                }, 100);
+            }
+        }
+
         // Add event listeners to existing inputs
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.food-item-input');
@@ -891,9 +993,17 @@
                 
                 // Touch events for mobile devices
                 input.addEventListener('touchend', handleMobileInput);
+                input.addEventListener('touchstart', handleMobileInput);
                 
                 // Composition events for mobile keyboards (especially iOS)
                 input.addEventListener('compositionend', handleMobileInput);
+                
+                // Focus events for mobile - start monitoring when focused
+                input.addEventListener('focus', (e) => {
+                    if (isMobile) {
+                        startPollingForInput(e.target, e.target.closest('tr'));
+                    }
+                });
             });
         });
     </script>
