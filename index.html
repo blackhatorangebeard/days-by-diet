@@ -512,6 +512,7 @@
         };
 
         let calculationDone = false;
+        let debounceTimers = new Map(); // For debouncing mobile input events
 
         function addNewRowAfter(currentRow) {
             const newRow = document.createElement('tr');
@@ -528,12 +529,23 @@
             newInput.addEventListener('input', handleFoodInput);
             newInput.addEventListener('keypress', handleKeyPress);
             
+            // Mobile-specific event listeners with enhanced handling
+            newInput.addEventListener('keyup', handleMobileInput);
+            newInput.addEventListener('change', handleMobileInput);
+            newInput.addEventListener('blur', handleMobileInput);
+            newInput.addEventListener('paste', handleMobileInput);
+            
+            // Touch events for mobile devices
+            newInput.addEventListener('touchend', handleMobileInput);
+            
+            // Composition events for mobile keyboards (especially iOS)
+            newInput.addEventListener('compositionend', handleMobileInput);
+            
             return newRow;
         }
 
         function handleFoodInput(event) {
             const input = event.target;
-            const value = input.value.trim();
             const currentRow = input.closest('tr');
             
             // Don't process meal headers
@@ -541,10 +553,45 @@
                 return;
             }
             
-            // If user typed something in a food item row, check if we need to add a new row
-            if (value && !hasEmptyRowAfter(currentRow)) {
-                addNewRowAfter(currentRow);
+            // Use longer timeout for mobile devices to ensure value is captured
+            // Mobile browsers often have delayed input processing
+            setTimeout(() => {
+                const currentValue = input.value.trim();
+                // If user typed something in a food item row, check if we need to add a new row
+                if (currentValue && !hasEmptyRowAfter(currentRow)) {
+                    addNewRowAfter(currentRow);
+                }
+            }, 50); // Increased from 10ms to 50ms for mobile compatibility
+        }
+
+        // New function specifically for mobile input handling with debouncing
+        function handleMobileInput(event) {
+            const input = event.target;
+            const currentRow = input.closest('tr');
+            
+            // Don't process meal headers
+            if (currentRow.classList.contains('meal-header')) {
+                return;
             }
+            
+            // Create unique key for this input to debounce
+            const inputKey = currentRow.outerHTML;
+            
+            // Clear existing timer for this input
+            if (debounceTimers.has(inputKey)) {
+                clearTimeout(debounceTimers.get(inputKey));
+            }
+            
+            // Set new debounced timer
+            const timer = setTimeout(() => {
+                const currentValue = input.value.trim();
+                if (currentValue && !hasEmptyRowAfter(currentRow)) {
+                    addNewRowAfter(currentRow);
+                }
+                debounceTimers.delete(inputKey);
+            }, 150); // Debounced delay for mobile
+            
+            debounceTimers.set(inputKey, timer);
         }
 
         function hasEmptyRowAfter(currentRow) {
@@ -556,7 +603,20 @@
             
             // Check if next row is empty
             const nextInput = nextRow.querySelector('.food-item-input');
-            return nextInput && nextInput.value.trim() === '';
+            if (nextInput && nextInput.value.trim() === '') {
+                return true;
+            }
+            
+            // Also check the row after next to prevent duplicate generation
+            const nextNextRow = nextRow.nextElementSibling;
+            if (nextNextRow && !nextNextRow.classList.contains('meal-header')) {
+                const nextNextInput = nextNextRow.querySelector('.food-item-input');
+                if (nextNextInput && nextNextInput.value.trim() === '') {
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         function handleKeyPress(event) {
@@ -822,6 +882,18 @@
             inputs.forEach(input => {
                 input.addEventListener('input', handleFoodInput);
                 input.addEventListener('keypress', handleKeyPress);
+                
+                // Mobile-specific event listeners for existing inputs
+                input.addEventListener('keyup', handleMobileInput);
+                input.addEventListener('change', handleMobileInput);
+                input.addEventListener('blur', handleMobileInput);
+                input.addEventListener('paste', handleMobileInput);
+                
+                // Touch events for mobile devices
+                input.addEventListener('touchend', handleMobileInput);
+                
+                // Composition events for mobile keyboards (especially iOS)
+                input.addEventListener('compositionend', handleMobileInput);
             });
         });
     </script>
