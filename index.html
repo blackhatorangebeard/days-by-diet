@@ -43,6 +43,12 @@
             
             .right-column {
                 padding-left: 0;
+                margin-left: 0;
+            }
+            
+            .left-column, .right-column {
+                padding-left: 0;
+                padding-right: 0;
             }
         }
 
@@ -74,10 +80,10 @@
             font-size: 13px;
         }
 
-        /* MOBILE: Larger table text */
+        /* MOBILE: Match annual table sizing */
         @media (max-width: 768px) {
             table {
-                font-size: 14px;
+                font-size: 12px;
             }
         }
 
@@ -90,11 +96,12 @@
             font-size: 12px;
         }
 
-        /* MOBILE: Larger header text and padding */
+        /* MOBILE: Match annual table header sizing */
         @media (max-width: 768px) {
             th {
-                font-size: 13px;
-                padding: 12px 8px;
+                font-size: 12px;
+                padding: 12px 6px;
+                text-align: center;
             }
         }
 
@@ -104,10 +111,12 @@
             background-color: #2a2a2a;
         }
 
-        /* MOBILE: More padding for touch targets */
+        /* MOBILE: Match annual table cell sizing */
         @media (max-width: 768px) {
             td {
-                padding: 10px 8px;
+                padding: 10px 6px;
+                text-align: center;
+                font-size: 12px;
             }
         }
 
@@ -122,12 +131,13 @@
             padding: 4px 0;
         }
 
-        /* MOBILE: Larger input text and touch targets */
+        /* MOBILE: Match annual table input sizing */
         @media (max-width: 768px) {
             .food-item-input {
-                font-size: 15px;
-                padding: 8px 4px;
-                min-height: 44px;
+                font-size: 13px;
+                padding: 4px;
+                min-height: 40px;
+                text-align: left;
             }
         }
 
@@ -151,10 +161,10 @@
             font-size: 13px;
         }
 
-        /* MOBILE: Larger meal headers */
+        /* MOBILE: Match table sizing */
         @media (max-width: 768px) {
             .meal-header {
-                font-size: 14px;
+                font-size: 12px;
             }
         }
 
@@ -176,12 +186,12 @@
             opacity: 1;
         }
 
-        /* MOBILE: Larger meal header input */
+        /* MOBILE: Match table sizing */
         @media (max-width: 768px) {
             .meal-header input {
-                font-size: 14px;
-                min-height: 44px;
-                padding: 8px 4px;
+                font-size: 12px;
+                min-height: 40px;
+                padding: 4px;
             }
         }
 
@@ -277,6 +287,13 @@
         .right-column {
             padding-left: 20px;
         }
+        
+        /* MOBILE: Remove right column padding */
+        @media (max-width: 768px) {
+            .right-column {
+                padding-left: 0 !important;
+            }
+        }
 
         .daily-score, .annual-total, .equivalent-time {
             text-align: center;
@@ -297,14 +314,17 @@
             }
         }
 
-        /* MOBILE: Ensure table doesn't overflow */
+        /* MOBILE: Consistent table container styling */
         @media (max-width: 768px) {
             .table-container {
                 overflow-x: auto;
+                margin: 0;
+                padding: 0;
             }
             
             table {
                 min-width: 100%;
+                width: 100%;
             }
         }
     </style>
@@ -313,7 +333,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 31 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 32 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
