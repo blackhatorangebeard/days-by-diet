@@ -306,7 +306,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 29 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 30 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
@@ -563,12 +563,17 @@
                 const inputKey = getInputKey(input);
                 const initialValue = initialInputValues.get(inputKey) || '';
                 
+                console.log('Input change - Key:', inputKey, 'Current:', currentValue, 'Initial:', initialValue);
+                
                 // Only add new row if:
                 // 1. Current value has content
                 // 2. Initial value was empty (this is a new entry, not editing)
                 // 3. No empty row exists after this one
                 if (currentValue && initialValue === '' && !hasEmptyRowAfter(currentRow)) {
+                    console.log('Adding new row - this was a new entry');
                     addNewRowAfter(currentRow);
+                } else {
+                    console.log('Not adding row - either editing existing or other condition not met');
                 }
             }, 150); // Increased delay for Samsung virtual keyboard
         }
@@ -586,10 +591,10 @@
             const inputKey = getInputKey(input);
             const currentValue = input.value.trim();
             
-            // Store the initial value when input is focused
-            if (!initialInputValues.has(inputKey)) {
-                initialInputValues.set(inputKey, currentValue);
-            }
+            // Always update the initial value when input is focused
+            // This ensures we track the state at the moment of focus
+            initialInputValues.set(inputKey, currentValue);
+            console.log('Focus - Input:', inputKey, 'Initial value:', currentValue);
         }
 
         function hasEmptyRowAfter(currentRow) {
