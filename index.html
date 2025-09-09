@@ -167,6 +167,13 @@
             outline: none;
             font-family: 'Poppins', sans-serif;
             font-size: 13px;
+            cursor: default;
+            user-select: none;
+        }
+
+        .meal-header input:read-only {
+            pointer-events: none;
+            opacity: 1;
         }
 
         /* MOBILE: Larger meal header input */
@@ -306,7 +313,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 30 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 31 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
@@ -317,7 +324,7 @@
                     </thead>
                     <tbody id="foodTableBody">
                         <tr class="meal-header">
-                            <td><input type="text" class="food-item-input" value="BREAKFAST" style="font-weight: bold;"></td>
+                            <td><input type="text" class="food-item-input" value="BREAKFAST" style="font-weight: bold;" readonly></td>
                             <td class="points-cell"></td>
                         </tr>
                         <tr>
@@ -325,7 +332,7 @@
                             <td class="points-cell"></td>
                         </tr>
                         <tr class="meal-header">
-                            <td><input type="text" class="food-item-input" value="LUNCH" style="font-weight: bold;"></td>
+                            <td><input type="text" class="food-item-input" value="LUNCH" style="font-weight: bold;" readonly></td>
                             <td class="points-cell"></td>
                         </tr>
                         <tr>
@@ -333,7 +340,7 @@
                             <td class="points-cell"></td>
                         </tr>
                         <tr class="meal-header">
-                            <td><input type="text" class="food-item-input" value="DINNER" style="font-weight: bold;"></td>
+                            <td><input type="text" class="food-item-input" value="DINNER" style="font-weight: bold;" readonly></td>
                             <td class="points-cell"></td>
                         </tr>
                         <tr>
@@ -341,7 +348,7 @@
                             <td class="points-cell"></td>
                         </tr>
                         <tr class="meal-header">
-                            <td><input type="text" class="food-item-input" value="SNACKS, SUPPLEMENTS, EXTRA" style="font-weight: bold;"></td>
+                            <td><input type="text" class="food-item-input" value="SNACKS, SUPPLEMENTS, EXTRA" style="font-weight: bold;" readonly></td>
                             <td class="points-cell"></td>
                         </tr>
                         <tr>
@@ -563,17 +570,12 @@
                 const inputKey = getInputKey(input);
                 const initialValue = initialInputValues.get(inputKey) || '';
                 
-                console.log('Input change - Key:', inputKey, 'Current:', currentValue, 'Initial:', initialValue);
-                
                 // Only add new row if:
                 // 1. Current value has content
                 // 2. Initial value was empty (this is a new entry, not editing)
                 // 3. No empty row exists after this one
                 if (currentValue && initialValue === '' && !hasEmptyRowAfter(currentRow)) {
-                    console.log('Adding new row - this was a new entry');
                     addNewRowAfter(currentRow);
-                } else {
-                    console.log('Not adding row - either editing existing or other condition not met');
                 }
             }, 150); // Increased delay for Samsung virtual keyboard
         }
@@ -594,7 +596,6 @@
             // Always update the initial value when input is focused
             // This ensures we track the state at the moment of focus
             initialInputValues.set(inputKey, currentValue);
-            console.log('Focus - Input:', inputKey, 'Initial value:', currentValue);
         }
 
         function hasEmptyRowAfter(currentRow) {
