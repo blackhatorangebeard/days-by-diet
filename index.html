@@ -243,24 +243,6 @@
             }
         }
 
-        .person-input {
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            width: 100%;
-            font-size: 11px;
-            outline: none;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* MOBILE: Larger person input */
-        @media (max-width: 768px) {
-            .person-input {
-                font-size: 13px;
-                min-height: 40px;
-                padding: 4px;
-            }
-        }
 
         .summary {
             margin-top: 15px;
@@ -324,7 +306,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 27 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 28 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
@@ -379,16 +361,18 @@
                 <table class="annual-table">
                     <thead>
                         <tr>
-                            <th>Person</th>
-                            <th>Daily Score</th>
+                            <th>Daily</th>
+                            <th>Weekly</th>
+                            <th>Monthly</th>
                             <th>Annual Total</th>
                             <th>Equivalent Time</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" class="person-input" value="[Name]" id="personName"></td>
                             <td class="daily-score" id="dailyScore"></td>
+                            <td class="weekly-score" id="weeklyScore"></td>
+                            <td class="monthly-score" id="monthlyScore"></td>
                             <td class="annual-total" id="annualTotal"></td>
                             <td class="equivalent-time" id="equivalentTime"></td>
                         </tr>
@@ -546,11 +530,10 @@
                 // When focus leaves an input (like hitting "Next"), check immediately
                 setTimeout(() => {
                     const currentValue = e.target.value.trim();
-                    const currentRow = e.target.closest('tr');
-                    if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
-                        console.log('Blur event adding row for:', currentValue);
-                        addNewRowAfter(currentRow);
-                    }
+                        const currentRow = e.target.closest('tr');
+                        if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
+                            addNewRowAfter(currentRow);
+                        }
                 }, 50);
             });
             
@@ -567,18 +550,13 @@
                 return;
             }
             
-            // Debug logging for Samsung Galaxy troubleshooting
-            console.log('Event triggered:', event.type, 'Value:', input.value.trim());
-            
             // Use a small delay to ensure the input value is fully captured
             // This works for both desktop and mobile
             setTimeout(() => {
                 const currentValue = input.value.trim();
-                console.log('After timeout - Value:', currentValue, 'Has empty row after:', hasEmptyRowAfter(currentRow));
                 
                 // If user typed something in a food item row, check if we need to add a new row
                 if (currentValue && !hasEmptyRowAfter(currentRow)) {
-                    console.log('Adding new row after:', currentValue);
                     addNewRowAfter(currentRow);
                 }
             }, 150); // Increased delay for Samsung virtual keyboard
@@ -586,22 +564,14 @@
 
         function hasEmptyRowAfter(currentRow) {
             const nextRow = currentRow.nextElementSibling;
-            if (!nextRow) {
-                console.log('No next row - add new row');
-                return false;
-            }
+            if (!nextRow) return false;
             
             // If next row is a meal header, we should add an empty row before it
-            if (nextRow.classList.contains('meal-header')) {
-                console.log('Next row is meal header - add new row before it');
-                return false;
-            }
+            if (nextRow.classList.contains('meal-header')) return false;
             
             // Check if next row is empty - if it is, we don't need another
             const nextInput = nextRow.querySelector('.food-item-input');
-            const hasEmpty = nextInput && nextInput.value.trim() === '';
-            console.log('Next row empty?', hasEmpty, 'Value:', nextInput ? nextInput.value : 'no input');
-            return hasEmpty;
+            return nextInput && nextInput.value.trim() === '';
         }
 
         function handleKeyPress(event) {
@@ -832,17 +802,24 @@
         }
 
         function updateAnnualCalculations(dailyPoints) {
+            // Calculate all time periods
+            const weeklyPoints = dailyPoints * 7;
+            const monthlyPoints = dailyPoints * 30.44; // Average days per month
             const annualPoints = dailyPoints * 365;
             const equivalentDays = Math.round(annualPoints / (24 * 60) * 10) / 10; // Convert to days with 1 decimal
             
-            document.getElementById('dailyScore').textContent = `${dailyPoints > 0 ? '+' : ''}${dailyPoints} minutes`;
-            document.getElementById('annualTotal').textContent = `${annualPoints > 0 ? '+' : ''}${annualPoints} minutes`;
+            // Update all the cells
+            document.getElementById('dailyScore').textContent = `${dailyPoints > 0 ? '+' : ''}${dailyPoints} min`;
+            document.getElementById('weeklyScore').textContent = `${weeklyPoints > 0 ? '+' : ''}${Math.round(weeklyPoints)} min`;
+            document.getElementById('monthlyScore').textContent = `${monthlyPoints > 0 ? '+' : ''}${Math.round(monthlyPoints)} min`;
+            document.getElementById('annualTotal').textContent = `${annualPoints > 0 ? '+' : ''}${annualPoints} min`;
             
+            // Format equivalent time
             if (Math.abs(equivalentDays) >= 1) {
-                document.getElementById('equivalentTime').textContent = `${equivalentDays > 0 ? '+' : ''}${equivalentDays} ${Math.abs(equivalentDays) === 1 ? 'day' : 'days'} ${equivalentDays > 0 ? 'gained' : 'lost'}`;
+                document.getElementById('equivalentTime').textContent = `${equivalentDays > 0 ? '+' : ''}${equivalentDays} ${Math.abs(equivalentDays) === 1 ? 'day' : 'days'}`;
             } else {
                 const hours = Math.round(annualPoints / 60 * 10) / 10;
-                document.getElementById('equivalentTime').textContent = `${hours > 0 ? '+' : ''}${hours} ${Math.abs(hours) === 1 ? 'hour' : 'hours'} ${hours > 0 ? 'gained' : 'lost'}`;
+                document.getElementById('equivalentTime').textContent = `${hours > 0 ? '+' : ''}${hours} ${Math.abs(hours) === 1 ? 'hour' : 'hours'}`;
             }
 
             // Update summary
@@ -889,7 +866,6 @@
                         const currentValue = e.target.value.trim();
                         const currentRow = e.target.closest('tr');
                         if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
-                            console.log('Blur event adding row for:', currentValue);
                             addNewRowAfter(currentRow);
                         }
                     }, 50);
