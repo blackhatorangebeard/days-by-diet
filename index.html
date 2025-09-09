@@ -324,7 +324,7 @@
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
-            <h1 class="section-title">DIET IN LAST 26 HOURS</h1>
+            <h1 class="section-title">DIET IN LAST 27 HOURS</h1>
             <div class="table-container">
                 <table id="foodTable">
                     <thead>
@@ -586,14 +586,22 @@
 
         function hasEmptyRowAfter(currentRow) {
             const nextRow = currentRow.nextElementSibling;
-            if (!nextRow) return false;
+            if (!nextRow) {
+                console.log('No next row - add new row');
+                return false;
+            }
             
-            // If next row is a meal header, we don't need an empty row
-            if (nextRow.classList.contains('meal-header')) return true;
+            // If next row is a meal header, we should add an empty row before it
+            if (nextRow.classList.contains('meal-header')) {
+                console.log('Next row is meal header - add new row before it');
+                return false;
+            }
             
-            // Check if next row is empty
+            // Check if next row is empty - if it is, we don't need another
             const nextInput = nextRow.querySelector('.food-item-input');
-            return nextInput && nextInput.value.trim() === '';
+            const hasEmpty = nextInput && nextInput.value.trim() === '';
+            console.log('Next row empty?', hasEmpty, 'Value:', nextInput ? nextInput.value : 'no input');
+            return hasEmpty;
         }
 
         function handleKeyPress(event) {
