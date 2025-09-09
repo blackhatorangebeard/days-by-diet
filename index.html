@@ -198,13 +198,7 @@
                 padding: 16px 20px;
                 font-size: 16px;
                 margin-top: 20px;
-                margin-left: 0 !important;
                 min-height: 50px;
-                display: block;
-            }
-            
-            #addRowButton {
-                margin-top: 10px;
             }
         }
 
@@ -375,7 +369,6 @@
                     </tbody>
                 </table>
                 <button class="calculate-button" onclick="calculateTotal()">CALCULATE TOTAL</button>
-                <button class="calculate-button" onclick="addRowToCurrentMeal()" style="background-color: #0066cc; margin-left: 10px;" id="addRowButton">+ ADD FOOD ITEM</button>
             </div>
         </div>
 
@@ -519,9 +512,6 @@
         };
 
         let calculationDone = false;
-        let debounceTimers = new Map(); // For debouncing mobile input events
-        let lastInputValues = new Map(); // Track previous input values for mobile
-        let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); // Detect mobile
 
         function addNewRowAfter(currentRow) {
             const newRow = document.createElement('tr');
@@ -533,35 +523,21 @@
             // Insert the new row after the current row
             currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
             
-            // Add event listeners to the new input
+            // Add event listeners to the new input - unified for all devices
             const newInput = newRow.querySelector('.food-item-input');
-            newInput.addEventListener('input', handleFoodInput);
+            newInput.addEventListener('input', handleUnifiedInput);
             newInput.addEventListener('keypress', handleKeyPress);
             
-            // Mobile-specific event listeners with enhanced handling
-            newInput.addEventListener('keyup', handleMobileInput);
-            newInput.addEventListener('change', handleMobileInput);
-            newInput.addEventListener('blur', handleMobileInput);
-            newInput.addEventListener('paste', handleMobileInput);
-            
-            // Touch events for mobile devices
-            newInput.addEventListener('touchend', handleMobileInput);
-            newInput.addEventListener('touchstart', handleMobileInput);
-            
-            // Composition events for mobile keyboards (especially iOS)
-            newInput.addEventListener('compositionend', handleMobileInput);
-            
-            // Focus events for mobile - start monitoring when focused
-            newInput.addEventListener('focus', (e) => {
-                if (isMobile) {
-                    startPollingForInput(e.target, e.target.closest('tr'));
-                }
-            });
+            // Additional events for mobile compatibility
+            newInput.addEventListener('keyup', handleUnifiedInput);
+            newInput.addEventListener('change', handleUnifiedInput);
+            newInput.addEventListener('paste', handleUnifiedInput);
             
             return newRow;
         }
 
-        function handleFoodInput(event) {
+        // Unified input handler for all devices - simple and reliable
+        function handleUnifiedInput(event) {
             const input = event.target;
             const currentRow = input.closest('tr');
             
@@ -570,101 +546,15 @@
                 return;
             }
             
-            // Use longer timeout for mobile devices to ensure value is captured
-            // Mobile browsers often have delayed input processing
+            // Use a small delay to ensure the input value is fully captured
+            // This works for both desktop and mobile
             setTimeout(() => {
                 const currentValue = input.value.trim();
                 // If user typed something in a food item row, check if we need to add a new row
                 if (currentValue && !hasEmptyRowAfter(currentRow)) {
                     addNewRowAfter(currentRow);
                 }
-            }, 50); // Increased from 10ms to 50ms for mobile compatibility
-        }
-
-        // New function specifically for mobile input handling with multiple strategies
-        function handleMobileInput(event) {
-            const input = event.target;
-            const currentRow = input.closest('tr');
-            
-            // Don't process meal headers
-            if (currentRow.classList.contains('meal-header')) {
-                return;
-            }
-            
-            // Strategy 1: Immediate check for some events
-            if (event.type === 'touchend' || event.type === 'compositionend') {
-                setTimeout(() => {
-                    checkAndAddRow(input, currentRow);
-                }, 50);
-            }
-            
-            // Strategy 2: Debounced check for other events
-            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
-            
-            if (debounceTimers.has(inputKey)) {
-                clearTimeout(debounceTimers.get(inputKey));
-            }
-            
-            const timer = setTimeout(() => {
-                checkAndAddRow(input, currentRow);
-                debounceTimers.delete(inputKey);
-            }, 200); // Longer delay for mobile
-            
-            debounceTimers.set(inputKey, timer);
-            
-            // Strategy 3: Start polling if on mobile device
-            if (isMobile) {
-                startPollingForInput(input, currentRow);
-            }
-        }
-
-        // Function to check and add row with better logic
-        function checkAndAddRow(input, currentRow) {
-            const currentValue = input.value.trim();
-            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
-            const lastValue = lastInputValues.get(inputKey) || '';
-            
-            // Only proceed if value actually changed and has content
-            if (currentValue !== lastValue && currentValue.length > 0 && !hasEmptyRowAfter(currentRow)) {
-                console.log('Adding new row after:', currentValue); // Debug log
-                addNewRowAfter(currentRow);
-            }
-            
-            // Update last known value
-            lastInputValues.set(inputKey, currentValue);
-        }
-
-        // Mobile polling fallback - checks input values periodically
-        function startPollingForInput(input, currentRow) {
-            const inputKey = input.id || currentRow.rowIndex || Math.random().toString(36);
-            
-            // Don't start multiple polling timers for same input
-            if (input.dataset.polling === 'true') {
-                return;
-            }
-            
-            input.dataset.polling = 'true';
-            
-            const pollInterval = setInterval(() => {
-                const currentValue = input.value.trim();
-                const lastValue = lastInputValues.get(inputKey) || '';
-                
-                if (currentValue !== lastValue) {
-                    checkAndAddRow(input, currentRow);
-                    
-                    // Stop polling after successful detection or if input loses focus
-                    if (currentValue.length > 0 || document.activeElement !== input) {
-                        clearInterval(pollInterval);
-                        input.dataset.polling = 'false';
-                    }
-                }
-            }, 300); // Poll every 300ms
-            
-            // Auto-stop polling after 10 seconds
-            setTimeout(() => {
-                clearInterval(pollInterval);
-                input.dataset.polling = 'false';
-            }, 10000);
+            }, 100); // Sufficient delay for all browsers and devices
         }
 
         function hasEmptyRowAfter(currentRow) {
@@ -676,20 +566,7 @@
             
             // Check if next row is empty
             const nextInput = nextRow.querySelector('.food-item-input');
-            if (nextInput && nextInput.value.trim() === '') {
-                return true;
-            }
-            
-            // Also check the row after next to prevent duplicate generation
-            const nextNextRow = nextRow.nextElementSibling;
-            if (nextNextRow && !nextNextRow.classList.contains('meal-header')) {
-                const nextNextInput = nextNextRow.querySelector('.food-item-input');
-                if (nextNextInput && nextNextInput.value.trim() === '') {
-                    return true;
-                }
-            }
-            
-            return false;
+            return nextInput && nextInput.value.trim() === '';
         }
 
         function handleKeyPress(event) {
@@ -949,61 +826,18 @@
             summaryList.appendChild(summaryItem);
         }
 
-        // Manual add row function for mobile fallback
-        function addRowToCurrentMeal() {
-            const tbody = document.getElementById('foodTableBody');
-            const rows = tbody.querySelectorAll('tr');
-            let targetRow = null;
-            
-            // Find the last non-empty food item row to add after it
-            for (let i = rows.length - 1; i >= 0; i--) {
-                const row = rows[i];
-                const input = row.querySelector('.food-item-input');
-                if (input && !row.classList.contains('meal-header')) {
-                    targetRow = row;
-                    break;
-                }
-            }
-            
-            // If we found a target row, add a new row after it
-            if (targetRow) {
-                const newRow = addNewRowAfter(targetRow);
-                // Focus the new input
-                setTimeout(() => {
-                    const newInput = newRow.querySelector('.food-item-input');
-                    if (newInput) {
-                        newInput.focus();
-                    }
-                }, 100);
-            }
-        }
 
         // Add event listeners to existing inputs
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.food-item-input');
             inputs.forEach(input => {
-                input.addEventListener('input', handleFoodInput);
+                input.addEventListener('input', handleUnifiedInput);
                 input.addEventListener('keypress', handleKeyPress);
                 
-                // Mobile-specific event listeners for existing inputs
-                input.addEventListener('keyup', handleMobileInput);
-                input.addEventListener('change', handleMobileInput);
-                input.addEventListener('blur', handleMobileInput);
-                input.addEventListener('paste', handleMobileInput);
-                
-                // Touch events for mobile devices
-                input.addEventListener('touchend', handleMobileInput);
-                input.addEventListener('touchstart', handleMobileInput);
-                
-                // Composition events for mobile keyboards (especially iOS)
-                input.addEventListener('compositionend', handleMobileInput);
-                
-                // Focus events for mobile - start monitoring when focused
-                input.addEventListener('focus', (e) => {
-                    if (isMobile) {
-                        startPollingForInput(e.target, e.target.closest('tr'));
-                    }
-                });
+                // Additional events for mobile compatibility
+                input.addEventListener('keyup', handleUnifiedInput);
+                input.addEventListener('change', handleUnifiedInput);
+                input.addEventListener('paste', handleUnifiedInput);
             });
         });
     </script>
