@@ -533,6 +533,27 @@
             newInput.addEventListener('change', handleUnifiedInput);
             newInput.addEventListener('paste', handleUnifiedInput);
             
+            // Samsung/Android specific events for "Next" button behavior
+            newInput.addEventListener('blur', handleUnifiedInput);
+            newInput.addEventListener('focusout', handleUnifiedInput);
+            
+            // Input method editor events (for virtual keyboards)
+            newInput.addEventListener('compositionend', handleUnifiedInput);
+            newInput.addEventListener('textInput', handleUnifiedInput);
+            
+            // Special handler for Samsung "Next" button behavior
+            newInput.addEventListener('blur', function(e) {
+                // When focus leaves an input (like hitting "Next"), check immediately
+                setTimeout(() => {
+                    const currentValue = e.target.value.trim();
+                    const currentRow = e.target.closest('tr');
+                    if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
+                        console.log('Blur event adding row for:', currentValue);
+                        addNewRowAfter(currentRow);
+                    }
+                }, 50);
+            });
+            
             return newRow;
         }
 
@@ -546,15 +567,21 @@
                 return;
             }
             
+            // Debug logging for Samsung Galaxy troubleshooting
+            console.log('Event triggered:', event.type, 'Value:', input.value.trim());
+            
             // Use a small delay to ensure the input value is fully captured
             // This works for both desktop and mobile
             setTimeout(() => {
                 const currentValue = input.value.trim();
+                console.log('After timeout - Value:', currentValue, 'Has empty row after:', hasEmptyRowAfter(currentRow));
+                
                 // If user typed something in a food item row, check if we need to add a new row
                 if (currentValue && !hasEmptyRowAfter(currentRow)) {
+                    console.log('Adding new row after:', currentValue);
                     addNewRowAfter(currentRow);
                 }
-            }, 100); // Sufficient delay for all browsers and devices
+            }, 150); // Increased delay for Samsung virtual keyboard
         }
 
         function hasEmptyRowAfter(currentRow) {
@@ -838,6 +865,27 @@
                 input.addEventListener('keyup', handleUnifiedInput);
                 input.addEventListener('change', handleUnifiedInput);
                 input.addEventListener('paste', handleUnifiedInput);
+                
+                // Samsung/Android specific events for "Next" button behavior
+                input.addEventListener('blur', handleUnifiedInput);
+                input.addEventListener('focusout', handleUnifiedInput);
+                
+                // Input method editor events (for virtual keyboards)
+                input.addEventListener('compositionend', handleUnifiedInput);
+                input.addEventListener('textInput', handleUnifiedInput);
+                
+                // Special handler for Samsung "Next" button behavior
+                input.addEventListener('blur', function(e) {
+                    // When focus leaves an input (like hitting "Next"), check immediately
+                    setTimeout(() => {
+                        const currentValue = e.target.value.trim();
+                        const currentRow = e.target.closest('tr');
+                        if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
+                            console.log('Blur event adding row for:', currentValue);
+                            addNewRowAfter(currentRow);
+                        }
+                    }, 50);
+                });
             });
         });
     </script>
