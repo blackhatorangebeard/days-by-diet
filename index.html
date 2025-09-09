@@ -496,6 +496,7 @@
         };
 
         let calculationDone = false;
+        let initialInputValues = new Map(); // Track initial values when inputs are focused
 
         function addNewRowAfter(currentRow) {
             const newRow = document.createElement('tr');
@@ -511,6 +512,7 @@
             const newInput = newRow.querySelector('.food-item-input');
             newInput.addEventListener('input', handleUnifiedInput);
             newInput.addEventListener('keypress', handleKeyPress);
+            newInput.addEventListener('focus', handleInputFocus);
             
             // Additional events for mobile compatibility
             newInput.addEventListener('keyup', handleUnifiedInput);
@@ -530,10 +532,14 @@
                 // When focus leaves an input (like hitting "Next"), check immediately
                 setTimeout(() => {
                     const currentValue = e.target.value.trim();
-                        const currentRow = e.target.closest('tr');
-                        if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
-                            addNewRowAfter(currentRow);
-                        }
+                    const currentRow = e.target.closest('tr');
+                    const inputKey = getInputKey(e.target);
+                    const initialValue = initialInputValues.get(inputKey) || '';
+                    
+                    // Only add row if this was a new entry (initial value was empty)
+                    if (currentValue && initialValue === '' && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
+                        addNewRowAfter(currentRow);
+                    }
                 }, 50);
             });
             
@@ -554,12 +560,36 @@
             // This works for both desktop and mobile
             setTimeout(() => {
                 const currentValue = input.value.trim();
+                const inputKey = getInputKey(input);
+                const initialValue = initialInputValues.get(inputKey) || '';
                 
-                // If user typed something in a food item row, check if we need to add a new row
-                if (currentValue && !hasEmptyRowAfter(currentRow)) {
+                // Only add new row if:
+                // 1. Current value has content
+                // 2. Initial value was empty (this is a new entry, not editing)
+                // 3. No empty row exists after this one
+                if (currentValue && initialValue === '' && !hasEmptyRowAfter(currentRow)) {
                     addNewRowAfter(currentRow);
                 }
             }, 150); // Increased delay for Samsung virtual keyboard
+        }
+
+        // Helper function to get unique key for an input
+        function getInputKey(input) {
+            const row = input.closest('tr');
+            const rowIndex = Array.from(row.parentNode.children).indexOf(row);
+            return `row-${rowIndex}`;
+        }
+
+        // Track initial value when input gets focus
+        function handleInputFocus(event) {
+            const input = event.target;
+            const inputKey = getInputKey(input);
+            const currentValue = input.value.trim();
+            
+            // Store the initial value when input is focused
+            if (!initialInputValues.has(inputKey)) {
+                initialInputValues.set(inputKey, currentValue);
+            }
         }
 
         function hasEmptyRowAfter(currentRow) {
@@ -845,6 +875,7 @@
             inputs.forEach(input => {
                 input.addEventListener('input', handleUnifiedInput);
                 input.addEventListener('keypress', handleKeyPress);
+                input.addEventListener('focus', handleInputFocus);
                 
                 // Additional events for mobile compatibility
                 input.addEventListener('keyup', handleUnifiedInput);
@@ -865,7 +896,11 @@
                     setTimeout(() => {
                         const currentValue = e.target.value.trim();
                         const currentRow = e.target.closest('tr');
-                        if (currentValue && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
+                        const inputKey = getInputKey(e.target);
+                        const initialValue = initialInputValues.get(inputKey) || '';
+                        
+                        // Only add row if this was a new entry (initial value was empty)
+                        if (currentValue && initialValue === '' && !currentRow.classList.contains('meal-header') && !hasEmptyRowAfter(currentRow)) {
                             addNewRowAfter(currentRow);
                         }
                     }, 50);
