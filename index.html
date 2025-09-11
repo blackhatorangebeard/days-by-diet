@@ -417,87 +417,163 @@
     </div>
 
     <script>
-        // ENHANCED FOOD DATABASE WITH PORTIONS AND QUANTITIES
+        // EXPANDED FOOD DATABASE WITH USER INPUT ANALYSIS
+        // Updated based on real user data patterns from Days by Diet
         const foodDatabase = {
             // ULTRA-PROCESSED FOODS (negative points)
             'hot dog': -36, 'hot dogs': -36,
             'soft drink': -12, 'soft drinks': -12, 'soda': -12, 'coke': -12, 'pepsi': -12,
-            'diet coke': -6, 'coke zero': -6, 'diet soda': -6,
+            'diet coke': -6, 'coke zero': -6, 'diet soda': -6, 'coke zero sugar': -6,
             'cheeseburger': -9, 'hamburger': -8, 'burger': -8,
             'french fries': -8, 'fries': -8, 'chips': -5,
             'pizza': -7, 'frozen pizza': -8,
             'candy': -6, 'chocolate bar': -5, 'milk chocolate': -4,
-            'ice cream': -6, 'gelato': -5,
+            'ice cream': -6, 'gelato': -5, 'ice cream for dessert': -6, 'ice cream for desert': -6,
             'cookies': -5, 'biscuits': -4,
             'cake': -5, 'cupcake': -4,
-            'donut': -5, 'doughnut': -5, 'muffin': -4,
-            'white bread': -3, 'processed bread': -3,
+            'donut': -5, 'doughnut': -5, 'muffin': -4, 'banana muffin': -4,
+            'white bread': -3, 'processed bread': -3, 'toast': -2, 'jam on toast': -4,
             'processed meat': -8, 'bacon': -6, 'sausage': -6, 'salami': -5,
             'energy drink': -8, 'red bull': -8,
             'instant noodles': -3, 'ramen': -3,
-            
+
+            // AUSTRALIAN/REGIONAL SPECIFIC ITEMS
+            'weetbix': -2, 'weet-bix': -2, 'weetabix': -2,
+            'vegemite': 0, 'marmite': 0,
+            'tim tams': -5, 'lamingtons': -4,
+            'meat pie': -6, 'sausage roll': -5,
+            'long black': 1, 'flat white': 0, 'cappuccino': -1,
+
+            // COMBINATION FOODS & MEALS
+            'spaghetti bolognese': -3, 'spag bol': -3, 'pasta bolognese': -3,
+            'fried rice': -1, 'chicken fried rice': -1, 'vegetable fried rice': 0,
+            'green curry': 2, 'red curry': 1, 'thai curry': 1,
+            'fish and chips': -8, 'bangers and mash': -7,
+            'steak and vegetables': 2, 'steak & roast veg': 2, 'steak & roast vegs': 2,
+            'chicken and rice': 1, 'beef stir fry': 1,
+            'caesar salad': 2, 'garden salad': 4, 'greek salad': 3,
+            'chicken sandwich': -2, 'ham sandwich': -3, 'tuna sandwich': 0,
+
+            // BRANDED SNACKS & CRACKERS
+            'rice crackers': -1, 'water crackers': -2, 'crackers': -2,
+            'cheese and crackers': -2, 'biscuits and cheese': -2,
+            'rice cakes': -1, 'corn chips': -4, 'potato chips': -5,
+            'pretzels': -2, 'popcorn': -1,
+
+            // SPREADS & CONDIMENTS
+            'jam': -3, 'jelly': -3, 'marmalade': -3,
+            'peanut butter': 1, 'almond butter': 2, 'tahini': 2,
+            'nutella': -4, 'honey': -1, 'maple syrup': -2,
+            'tomato sauce': -2, 'ketchup': -3, 'bbq sauce': -3,
+            'mayo': -2, 'mayonnaise': -2, 'mustard': 0,
+
             // HEALTHY FOODS (positive points)
             'leafy greens': 8, 'spinach': 8, 'kale': 8, 'arugula': 8, 'lettuce': 6,
             'berries': 7, 'blueberries': 7, 'strawberries': 7, 'raspberries': 7, 'blackberries': 7,
-            'nuts': 6, 'almonds': 6, 'walnuts': 6, 'pistachios': 6, 'pecans': 5,
+            'nuts': 6, 'almonds': 6, 'walnuts': 6, 'pistachios': 6, 'pistachio nuts': 6, 'pecans': 5,
             'salmon': 6, 'fish': 5, 'tuna': 5, 'sardines': 6, 'mackerel': 6,
             'avocado': 5, 'olive oil': 4, 'extra virgin olive oil': 5,
-            'beans': 5, 'lentils': 5, 'chickpeas': 4, 'black beans': 5,
-            'quinoa': 4, 'brown rice': 2, 'wild rice': 3,
-            'sweet potato': 4, 'yam': 3,
-            'broccoli': 5, 'cauliflower': 4, 'brussels sprouts': 4,
+            'beans': 5, 'lentils': 5, 'chickpeas': 4, 'black beans': 5, 'can of beans': 5,
+            'quinoa': 4, 'brown rice': 2, 'wild rice': 3, 'cup of rice': 1,
+            'sweet potato': 4, 'yam': 3, 'potato': 1, 'mashed potato': -1, 'mash potato': -1,
+            'broccoli': 5, 'cauliflower': 4, 'brussels sprouts': 4, 'sprouts': 4, 'half cup sprouts': 4,
             'tomatoes': 3, 'cherry tomatoes': 3,
-            'carrots': 3, 'bell peppers': 2, 'cucumber': 2, 'celery': 2,
-            'apple': 3, 'banana': 2, 'orange': 3, 'grapefruit': 3,
-            'greek yogurt': 4, 'plain yogurt': 3, 'kefir': 4,
-            'eggs': 3, 'egg whites': 2,
-            'chicken breast': 3, 'turkey': 3, 'lean beef': 2,
-            'brisket': 2, 'steak': 2, 'ground beef': 1,
-            'oatmeal': 3, 'steel cut oats': 4,
-            'green tea': 2, 'herbal tea': 1,
-            'coffee': 1, 'black coffee': 1,
-            'dark chocolate': 2, '85% dark chocolate': 3,
+            'carrots': 3, 'carrot': 3, 'half a carrot': 3, 'bell peppers': 2, 'capsicum': 2,
+            'cucumber': 2, '1 cucumber': 2, 'celery': 2, 'onion': 1,
+            'apple': 3, 'banana': 2, 'orange': 3, 'grapefruit': 3, 'fruit': 2, 'bits of fruit': 2,
+            'greek yogurt': 4, 'plain yogurt': 3, 'kefir': 4, 'yogurt': 2,
+            'eggs': 3, 'egg whites': 2, 'boiled eggs': 3, '2 boiled eggs': 3, 'boiled eggs with chili oil': 3,
+            'chicken breast': 3, 'turkey': 3, 'lean beef': 2, 'chicken thigh': 2, 'roast chicken thigh': 2,
+            'brisket': 2, 'steak': 2, 'ground beef': 1, '3 pieces steak': 2, 'slowcooked brisket': 3,
+            'oatmeal': 3, 'steel cut oats': 4, 'porridge': 2,
+            'green tea': 2, 'herbal tea': 1, 'tea': 1,
+            'coffee': 1, 'black coffee': 1, '2 coffees': 1, 'coffee with milk': 0, 'coffee with cream': -1,
+            'dark chocolate': 2, '85% dark chocolate': 3, 'dark chocolate 80%': 3,
             'kimchi': 3, 'sauerkraut': 2,
-            'garlic': 1, 'onion': 1, 'ginger': 1,
-            
+            'garlic': 1, 'ginger': 1,
+
+            // CHEESE VARIETIES
+            'cheese': -1, 'cheddar cheese': -1.4, 'mozzarella': -1, 'feta': 0, 'cream cheese': -2,
+            'cottage cheese': 1, 'ricotta': 0, 'parmesan': -1, 'blue cheese': -2,
+
             // NEUTRAL/MIXED FOODS
-            'white rice': -0.5, 'pasta': -0.5, 'whole wheat pasta': 1,
-            'milk': 0, 'whole milk': 0, 'skim milk': 1,
-            'cheese': -1, 'cheddar cheese': -1.4, 'mozzarella': -1,
+            'white rice': -0.5, 'pasta': -0.5, 'whole wheat pasta': 1, 'rice': 0,
+            'milk': 0, 'whole milk': 0, 'skim milk': 1, '100ml milk': 0,
             'butter': -2, 'margarine': -3,
-            
+            'bread': -2, 'whole grain bread': 1, 'sourdough': -1,
+
             // BEVERAGES WITH DOSE-RESPONSE
-            'red wine': 2, 'white wine': 1, 'wine': 2,
+            'red wine': 2, 'white wine': 1, 'wine': 2, '2 glasses of red wine': 2,
             'beer': -2, 'light beer': -1,
             'whiskey': -3, 'vodka': -3, 'gin': -3,
-            'water': 0.5,
-            
-            // SUPPLEMENTS (positive points)
+            'water': 0.5, '500ml water': 0.5, 'sparkling water': 0.5,
+
+            // COOKING METHODS & PREPARATIONS
+            'fried': -2, 'deep fried': -4, 'grilled': 1, 'roasted': 1, 'steamed': 2,
+            'boiled': 1, 'baked': 0, 'raw': 2, 'fresh': 1,
+
+            // SUPPLEMENTS & VITAMINS (positive points)
             'fish oil': 4, 'omega 3': 4, 'omega-3': 4,
-            'vitamin d': 3, 'vitamin d3': 3,
-            'vitamin c': 2, 'magnesium': 1, 'zinc': 1,
+            'vitamin d': 3, 'vitamin d3': 3, 'vit d': 3,
+            'vitamin c': 2, 'vit c': 2, 'magnesium': 1, 'zinc': 1,
             'probiotics': 3, 'multivitamin': 2,
-            'iron': 1, 'calcium': 1, 'vitamin b12': 2,
+            'iron': 1, 'calcium': 1, 'vitamin b12': 2, 'vit b12': 2,
             'folate': 1, 'folic acid': 1, 'biotin': 1,
-            'vitamin e': 1, 'coq10': 2, 'turmeric': 2,
+            'vitamin e': 1, 'vit e': 1, 'coq10': 2, 'turmeric': 2,
             'curcumin': 2, 'ashwagandha': 1, 'echinacea': 1,
-            'andrographis': 1, 'iodine': 1
+            'andrographis': 1, 'iodine': 1, 'creatine': 1, '5g creatine': 1,
+            'vitamin k2': 2, 'vit k2': 2, 'vitamin k': 2,
+
+            // SPECIALTY HEALTH ITEMS
+            'protein powder': 2, 'whey protein': 2, 'protein shake': 2,
+            'coconut oil': 1, 'mct oil': 2, 'flax seeds': 3, 'chia seeds': 4,
+            'spirulina': 4, 'chlorella': 3, 'nutritional yeast': 2,
+            'apple cider vinegar': 1, 'kombucha': 2,
+
+            // TREATS & DESSERTS
+            'chocolate': -2, 'candy bar': -5, 'lollies': -5,
+            'bliss balls': 1, '2 bliss balls': 1, 'energy balls': 1,
+            'fruit salad': 4, 'smoothie': 2, 'green smoothie': 4,
+
+            // DUMPLINGS & ASIAN FOODS
+            'dumplings': -2, '2 dumplings': -2, 'steamed dumplings': -1,
+            'spring rolls': -3, 'sushi': 1, 'miso soup': 2,
+            'noodles': -1, 'rice noodles': -1, 'soba noodles': 0,
+
+            // BREAKFAST CEREALS
+            'cereal': -3, 'muesli': 0, 'granola': -1, 'corn flakes': -3,
+            'special k': -2, 'all bran': 1, 'oat bran': 2,
+
+            // ADDITIONAL SEASONINGS & ADDITIVES
+            'salt': -1, 'sea salt': 0, 'seasalt': 0, 'baking soda': 0,
+            'herbs': 1, 'spices': 1, 'pepper': 0, 'chili': 1,
+
+            // PORTION-SPECIFIC ENTRIES
+            'bowl of': 1, 'cup of': 1, 'glass of': 1, 'piece of': 1,
+            'serving of': 1, 'portion of': 1, 'handful of': 1,
+
+            // RESTAURANT/TAKEAWAY ITEMS
+            'mcdonalds': -8, 'kfc': -8, 'subway': -3, 'pizza hut': -7,
+            'chinese takeaway': -3, 'fish and chips shop': -6,
+            'thai food': 1, 'japanese food': 2, 'mediterranean food': 4
         };
 
-        // DOSE-RESPONSE CURVES FOR SPECIFIC FOODS
+        // ENHANCED DOSE-RESPONSE CURVES (from original system)
         const doseResponseRules = {
             'red wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 2, penalty: -4 },
             'white wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 1, penalty: -3 },
             'wine': { beneficial: 1, neutral: 2, harmful: 3, maxBenefit: 2, penalty: -4 },
             'coffee': { beneficial: 3, neutral: 4, harmful: 6, maxBenefit: 3, penalty: -1 },
             'black coffee': { beneficial: 3, neutral: 4, harmful: 6, maxBenefit: 3, penalty: -1 },
+            'coffee with milk': { beneficial: 2, neutral: 3, harmful: 5, maxBenefit: 2, penalty: -1 },
+            'coffee with cream': { beneficial: 1, neutral: 2, harmful: 4, maxBenefit: 1, penalty: -2 },
             'green tea': { beneficial: 5, neutral: 8, harmful: 12, maxBenefit: 10, penalty: -0.5 },
             'dark chocolate': { beneficial: 2, neutral: 4, harmful: 8, maxBenefit: 4, penalty: -2 },
             'nuts': { beneficial: 3, neutral: 6, harmful: 10, maxBenefit: 6, penalty: -1 },
             'beer': { beneficial: 0, neutral: 1, harmful: 2, maxBenefit: -1, penalty: -3 }
         };
 
-        // PORTION SIZE MULTIPLIERS
+        // ENHANCED PORTION SIZE MULTIPLIERS
         const portionMultipliers = {
             // Weight units (per 100g base)
             'g': 0.01, 'gram': 0.01, 'grams': 0.01,
@@ -508,18 +584,25 @@
             // Volume units (per standard serving)
             'ml': 0.004, 'milliliter': 0.004, 'milliliters': 0.004,
             'l': 4, 'liter': 4, 'liters': 4, 'litre': 4, 'litres': 4,
-            'cup': 1, 'cups': 1,
-            'glass': 1, 'glasses': 1,
+            'cup': 1, 'cups': 1, 'cup of': 1, 'cups of': 1,
+            'glass': 1, 'glasses': 1, 'glass of': 1, 'glasses of': 1,
             'bottle': 3, 'bottles': 3,
-            'can': 1, 'cans': 1,
+            'can': 1, 'cans': 1, 'can of': 1,
+            'bowl': 1.5, 'bowls': 1.5, 'bowl of': 1.5,
             'tbsp': 0.25, 'tablespoon': 0.25, 'tablespoons': 0.25,
             'tsp': 0.08, 'teaspoon': 0.08, 'teaspoons': 0.08,
             
             // Count units
-            'x': 1, '×': 1, 'piece': 1, 'pieces': 1,
+            'x': 1, '×': 1, 'piece': 1, 'pieces': 1, 'piece of': 1, 'pieces of': 1,
             'slice': 0.5, 'slices': 0.5,
-            'serving': 1, 'servings': 1,
-            'handful': 1, 'handfuls': 1
+            'serving': 1, 'servings': 1, 'serving of': 1,
+            'handful': 1, 'handfuls': 1, 'handful of': 1,
+            'bit': 0.3, 'bits': 0.3, 'bits of': 0.3,
+            'half': 0.5, 'quarter': 0.25,
+            
+            // Common portion descriptors
+            'small': 0.75, 'medium': 1, 'large': 1.5, 'extra large': 2,
+            'mini': 0.5, 'regular': 1, 'king size': 2
         };
 
         let calculationDone = false;
@@ -934,5 +1017,350 @@
             });
         });
     </script>
+
+    <!-- LEGAL DISCLOSURES SECTION - Add this before closing </body> tag -->
+
+    <div class="legal-disclosures-section">
+        <div class="disclosures-content">
+            
+            <!-- Main Disclaimer - Always Visible -->
+            <div class="primary-disclaimer">
+                <h3 class="disclaimer-title">Important Health & Legal Information</h3>
+                <div class="disclaimer-text">
+                    <strong>Educational Purpose Only:</strong> Days by Diet is designed to raise awareness about how dietary choices may impact long-term health outcomes. This tool provides educational estimates based on epidemiological research and should not be considered medical advice, diagnosis, or treatment recommendations.
+                </div>
+            </div>
+
+            <!-- Toggle Button -->
+            <div class="toggle-button-container">
+                <button class="disclosure-toggle" onclick="toggleDisclosure()">
+                    <span id="toggleText">View Complete Disclaimer</span>
+                    <span class="toggle-arrow" id="toggleArrow">▼</span>
+                </button>
+            </div>
+
+            <!-- Collapsible Content -->
+            <div class="disclosure-content" id="disclosureContent">
+                
+                <!-- Medical Disclaimer -->
+                <div class="medical-disclaimer">
+                    <h4 class="section-subtitle">Medical Disclaimer</h4>
+                    <div class="disclaimer-text">
+                        <strong>Consult Healthcare Professionals:</strong> Always consult with qualified healthcare providers before making significant dietary changes, especially if you have medical conditions, take medications, or have specific health concerns. Individual health needs vary significantly, and this tool cannot account for personal medical history, genetic factors, allergies, or drug interactions.
+                        <br><br>
+                        <strong>Not a Substitute for Professional Care:</strong> This calculator does not replace professional medical advice, diagnosis, or treatment. If you have health concerns or symptoms, seek immediate medical attention.
+                    </div>
+                </div>
+
+                <!-- Methodology Transparency -->
+                <div class="methodology-disclaimer">
+                    <h4 class="section-subtitle">Calculation Methodology</h4>
+                    <div class="disclaimer-text">
+                        <strong>Research-Based Estimates:</strong> Our "life minutes" calculations are derived from peer-reviewed epidemiological studies examining associations between dietary patterns and health outcomes. These represent population-level statistical associations, not individual predictions.
+                        <br><br>
+                        <strong>Simplified Model:</strong> This tool provides simplified estimates for educational awareness. Actual health impacts depend on numerous factors including genetics, environment, exercise, stress, sleep, medical history, and overall lifestyle patterns not captured in this calculation.
+                    </div>
+                </div>
+
+                <!-- Affiliate Disclosure -->
+                <div class="affiliate-disclaimer">
+                    <h4 class="section-subtitle">Financial Disclosure</h4>
+                    <div class="disclaimer-text">
+                        <strong>Affiliate Partnerships:</strong> Days by Diet participates in affiliate programs with carefully selected health and nutrition companies including iHerb and Noom. We earn commissions from qualifying purchases made through our links at no additional cost to you.
+                        <br><br>
+                        <strong>Editorial Independence:</strong> Our recommendations are based on nutritional science and user benefit, not commission rates. We only partner with companies whose products and services align with our mission of promoting genuine health awareness and improvement.
+                        <br><br>
+                        <strong>Transparency Commitment:</strong> All affiliate relationships are clearly disclosed. Our primary goal is health education; monetization supports keeping this tool free and continuously improving.
+                    </div>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div class="privacy-disclaimer">
+                    <h4 class="section-subtitle">Privacy & Data Usage</h4>
+                    <div class="disclaimer-text">
+                        <strong>No Personal Health Data Storage:</strong> Days by Diet does not store your food entries or personal health information on our servers. All calculations are performed locally in your browser.
+                        <br><br>
+                        <strong>Analytics & Improvement:</strong> We use aggregated, anonymous usage data to improve the tool's functionality and user experience. No individually identifiable information is collected or shared.
+                        <br><br>
+                        <strong>Cookie Usage:</strong> This site uses cookies for basic functionality and analytics. Affiliate partners may use cookies to track referrals for commission purposes.
+                    </div>
+                </div>
+
+                <!-- Limitations -->
+                <div class="limitations-disclaimer">
+                    <h4 class="section-subtitle">Known Limitations</h4>
+                    <div class="disclaimer-text">
+                        <strong>Population-Based Data:</strong> Calculations are based on population-level research that may not apply to all individuals, ethnic groups, age ranges, or health conditions.
+                        <br><br>
+                        <strong>Simplified Nutrition Model:</strong> This tool focuses on specific foods and nutrients with strong research backing. It does not capture the full complexity of nutritional interactions, bioavailability, or individual metabolic differences.
+                        <br><br>
+                        <strong>Dynamic Research:</strong> Nutritional science evolves continuously. Our calculations reflect current research understanding but may be updated as new evidence emerges.
+                    </div>
+                </div>
+
+                <!-- Terms of Use Summary -->
+                <div class="terms-summary">
+                    <h4 class="section-subtitle">Terms of Use Summary</h4>
+                    <div class="disclaimer-text">
+                        <strong>Acceptance:</strong> By using Days by Diet, you acknowledge understanding these limitations and agree to use this tool for educational awareness purposes only.
+                        <br><br>
+                        <strong>Liability Limitation:</strong> Days by Diet, its creators, and affiliates are not liable for any health outcomes, medical decisions, or consequences resulting from use of this tool.
+                        <br><br>
+                        <strong>Age Requirement:</strong> This tool is designed for adults 18 years and older. Nutritional needs for children, adolescents, pregnant or nursing women require specialized professional guidance.
+                    </div>
+                </div>
+
+                <!-- Contact & Updates -->
+                <div class="contact-disclaimer">
+                    <h4 class="section-subtitle">Questions & Updates</h4>
+                    <div class="disclaimer-text">
+                        <strong>Scientific Updates:</strong> As nutrition research evolves, we update our calculations to reflect current scientific consensus. Users are encouraged to check for updates periodically.
+                        <br><br>
+                        <strong>Feedback Welcome:</strong> We welcome feedback from healthcare professionals and users to improve accuracy and utility while maintaining our educational mission.
+                        <br><br>
+                        <strong>Contact:</strong> For questions about methodology, partnerships, or suggestions, please contact us through our website.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer - Always Visible -->
+        <div class="footer-section">
+            <div class="disclaimer-text" style="text-align: center; font-size: 11px; color: #888888;">
+                © 2025 Days by Diet. All rights reserved. | 
+                <a href="#terms" style="color: #888888;">Terms of Use</a> | 
+                <a href="#privacy" style="color: #888888;">Privacy Policy</a> | 
+                <a href="#contact" style="color: #888888;">Contact</a>
+                <br><br>
+                <em>Last updated: January 2025</em>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* LEGAL DISCLOSURES STYLING */
+    .legal-disclosures-section {
+        margin-top: 60px;
+        padding: 40px 0;
+        background-color: #1a1a1a;
+        border-top: 1px solid #3a3a3a;
+        text-align: center;
+    }
+
+    .disclosures-content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .disclaimer-title {
+        font-family: 'Georgia', serif;
+        font-size: 18px;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 15px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    .section-subtitle {
+        font-family: 'Georgia', serif;
+        font-size: 14px;
+        font-weight: bold;
+        color: #cccccc;
+        margin: 25px 0 10px 0;
+        letter-spacing: 0.2px;
+        text-align: left;
+    }
+
+    .disclaimer-text {
+        font-size: 12px;
+        color: #aaaaaa;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .disclaimer-text strong {
+        color: #cccccc;
+        font-weight: 600;
+    }
+
+    .primary-disclaimer {
+        background-color: #2a2a2a;
+        padding: 20px;
+        border: 1px solid #4a4a4a;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .primary-disclaimer .disclaimer-text {
+        color: #ffffff;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    /* Toggle Button Styling */
+    .toggle-button-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .disclosure-toggle {
+        background-color: #3a3a3a;
+        color: #ffffff;
+        border: 1px solid #4a4a4a;
+        padding: 12px 20px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: 'Poppins', sans-serif;
+        transition: background-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .disclosure-toggle:hover {
+        background-color: #4a4a4a;
+    }
+
+    .toggle-arrow {
+        font-size: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-arrow.expanded {
+        transform: rotate(180deg);
+    }
+
+    /* Collapsible Content */
+    .disclosure-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+        text-align: left;
+    }
+
+    .disclosure-content.expanded {
+        max-height: 3000px;
+        transition: max-height 0.6s ease-in;
+    }
+
+    .medical-disclaimer,
+    .methodology-disclaimer,
+    .affiliate-disclaimer,
+    .privacy-disclaimer,
+    .limitations-disclaimer,
+    .terms-summary,
+    .contact-disclaimer {
+        margin-bottom: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #2a2a2a;
+    }
+
+    /* Footer Section */
+    .footer-section {
+        border-top: 1px solid #3a3a3a;
+        padding-top: 20px;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .footer-section a {
+        text-decoration: none;
+    }
+
+    .footer-section a:hover {
+        text-decoration: underline;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .legal-disclosures-section {
+            margin-top: 40px;
+            padding: 30px 0;
+        }
+        
+        .disclosures-content {
+            padding: 0 15px;
+        }
+        
+        .disclaimer-title {
+            font-size: 16px;
+        }
+        
+        .section-subtitle {
+            font-size: 13px;
+        }
+        
+        .disclaimer-text {
+            font-size: 11px;
+        }
+        
+        .primary-disclaimer .disclaimer-text {
+            font-size: 12px;
+        }
+        
+        .disclosure-toggle {
+            padding: 14px 18px;
+            font-size: 12px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .toggle-arrow {
+            font-size: 10px;
+        }
+    }
+
+    /* Print Styles */
+    @media print {
+        .legal-disclosures-section {
+            background-color: white !important;
+            color: black !important;
+        }
+        
+        .disclaimer-text,
+        .section-subtitle,
+        .disclaimer-title {
+            color: black !important;
+        }
+        
+        .disclosure-content {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        
+        .disclosure-toggle {
+            display: none;
+        }
+    }
+    </style>
+
+    <script>
+    function toggleDisclosure() {
+        const content = document.getElementById('disclosureContent');
+        const arrow = document.getElementById('toggleArrow');
+        const toggleText = document.getElementById('toggleText');
+        
+        if (content.classList.contains('expanded')) {
+            // Close the disclosure
+            content.classList.remove('expanded');
+            arrow.classList.remove('expanded');
+            toggleText.textContent = 'View Complete Disclaimer';
+        } else {
+            // Open the disclosure
+            content.classList.add('expanded');
+            arrow.classList.add('expanded');
+            toggleText.textContent = 'Hide Complete Disclaimer';
+        }
+    }
+    </script>
+     
 </body>
 </html>
