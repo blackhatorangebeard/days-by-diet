@@ -1129,10 +1129,10 @@
         <!-- Footer - Always Visible -->
         <div class="footer-section">
             <div class="disclaimer-text" style="text-align: center; font-size: 11px; color: #888888;">
-                © 2025 Days by Diet. All rights reserved. | 
-                <a href="#terms" style="color: #888888;">Terms of Use</a> | 
-                <a href="#privacy" style="color: #888888;">Privacy Policy</a> | 
-                <a href="#contact" style="color: #888888;">Contact</a>
+                © 2025 Days by Diet. All rights reserved.
+                <br><br>
+                <a href="#" onclick="showLegalModal(); return false;" style="color: #888888;">Additional Legal Terms</a> | 
+                <a href="#" onclick="showContactModal(); return false;" style="color: #888888;">Contact</a>
                 <br><br>
                 <em>Last updated: January 2025</em>
             </div>
@@ -1360,6 +1360,412 @@
             toggleText.textContent = 'Hide Complete Disclaimer';
         }
     }
+    </script>
+
+    <!-- LEGAL INFORMATION MODAL (Only what's NOT in the disclaimer) -->
+    <div id="legal-modal" class="info-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeLegalModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeLegalModal()">×</button>
+            
+            <h1 style="font-family: Georgia, serif; font-size: 22px; margin-bottom: 20px; text-align: center;">Additional Legal Terms</h1>
+            
+            <p style="font-size: 12px; line-height: 1.5; margin-bottom: 20px; color: #cccccc; text-align: center;">
+                These terms supplement our comprehensive disclosure statement below. For full medical disclaimers, affiliate disclosures, and privacy information, please see the "Click for Full Disclosure Statement" section on this page.
+            </p>
+            
+            <!-- Service Usage Restrictions -->
+            <h2 class="modal-section-title">Service Usage Restrictions</h2>
+            <div class="modal-text">
+                <strong>No Automated Data Extraction:</strong> You may not use automated systems, bots, or scraping tools to extract data from Days by Diet, or integrate this service into third-party applications without written permission.
+                <br><br>
+                <strong>Service Modifications:</strong> We reserve the right to modify, suspend, or discontinue any aspect of the service at any time without prior notice. We may also update these terms without notice; continued use constitutes acceptance of changes.
+                <br><br>
+                <strong>Personal Use Only:</strong> This tool is provided for personal, non-commercial educational purposes. You may not use it to provide health advice to others or represent it as a professional medical tool.
+            </div>
+            
+            <!-- Governing Law & Jurisdiction -->
+            <h2 class="modal-section-title">Governing Law & Jurisdiction</h2>
+            <div class="modal-text">
+                <strong>New Zealand Law:</strong> This agreement and your use of Days by Diet are governed by the laws of New Zealand, without regard to conflict of law principles. Any disputes arising from your use of this service shall be subject to the exclusive jurisdiction of the courts of New Zealand.
+                <br><br>
+                <strong>International Users:</strong> By accessing this service from outside New Zealand, you acknowledge that you are doing so at your own initiative and are responsible for compliance with your local laws and regulations.
+            </div>
+            
+            <!-- Business Information -->
+            <h2 class="modal-section-title">Business Information</h2>
+            <div class="modal-text">
+                <strong>Legal Entity:</strong><br>
+                Blue and Ginge Creative Ltd<br>
+                13 Hargreaves Street<br>
+                Auckland, New Zealand 1011
+                <br><br>
+                <strong>For Questions or Concerns:</strong> Please use the contact form available via the "Contact" link at the bottom of this page.
+            </div>
+            
+            <!-- Severability -->
+            <h2 class="modal-section-title">Severability</h2>
+            <div class="modal-text">
+                If any provision of these terms is found to be invalid or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect.
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #4a4a4a;">
+                <button 
+                    onclick="closeLegalModal()"
+                    style="background-color: #660000; color: white; border: none; padding: 10px 30px; border-radius: 4px; font-size: 13px; cursor: pointer; font-family: 'Poppins', sans-serif;"
+                    onmouseover="this.style.backgroundColor='#aa0000'"
+                    onmouseout="this.style.backgroundColor='#660000'"
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT MODAL -->
+    <div id="contact-modal" class="info-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeContactModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeContactModal()">×</button>
+            <h2 style="font-family: Georgia, serif; margin-bottom: 15px; text-align: center;">Contact Days by Diet</h2>
+            
+            <p style="font-size: 13px; line-height: 1.5; margin-bottom: 20px; color: #cccccc; text-align: center;">
+                We welcome your questions and feedback about our health awareness tool.
+            </p>
+            
+            <!-- Contact Form -->
+            <form id="contact-form" onsubmit="handleContactSubmit(event)">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: #ffffff;">
+                        Name: <span style="color: #cc8888;">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="contact-name" 
+                        name="name"
+                        required
+                        style="width: 100%; padding: 10px; background-color: #1a1a1a; border: 1px solid #4a4a4a; border-radius: 4px; color: #ffffff; font-size: 13px; font-family: 'Poppins', sans-serif; box-sizing: border-box;"
+                        placeholder="Your name"
+                    >
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: #ffffff;">
+                        Email Address: <span style="color: #cc8888;">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="contact-email" 
+                        name="email"
+                        required
+                        style="width: 100%; padding: 10px; background-color: #1a1a1a; border: 1px solid #4a4a4a; border-radius: 4px; color: #ffffff; font-size: 13px; font-family: 'Poppins', sans-serif; box-sizing: border-box;"
+                        placeholder="your.email@example.com"
+                    >
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: #ffffff;">
+                        Message: <span style="color: #cc8888;">*</span>
+                    </label>
+                    <textarea 
+                        id="contact-message" 
+                        name="message"
+                        required
+                        rows="5"
+                        style="width: 100%; padding: 10px; background-color: #1a1a1a; border: 1px solid #4a4a4a; border-radius: 4px; color: #ffffff; font-size: 13px; font-family: 'Poppins', sans-serif; resize: vertical; box-sizing: border-box;"
+                        placeholder="How can we help you?"
+                    ></textarea>
+                </div>
+                
+                <div style="margin-bottom: 20px; padding: 12px; background-color: #3a3a3a; border-radius: 4px; font-size: 11px; color: #aaaaaa;">
+                    <strong style="color: #ffffff;">Note:</strong> We cannot provide personal medical advice. For health concerns, please consult qualified healthcare professionals or use our partner services for personalized guidance.
+                </div>
+                
+                <button 
+                    type="submit" 
+                    id="submit-btn"
+                    style="width: 100%; padding: 12px; background-color: #660000; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#aa0000'"
+                    onmouseout="this.style.backgroundColor='#660000'"
+                >
+                    Send Message
+                </button>
+                
+                <div id="form-status" style="margin-top: 15px; font-size: 12px; text-align: center;"></div>
+            </form>
+            
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #4a4a4a; font-size: 11px; color: #888888; text-align: center;">
+                <strong style="color: #ffffff;">Blue and Ginge Creative Ltd</strong><br>
+                13 Hargreaves Street, Auckland, New Zealand 1011<br>
+                Response time: Within 48 hours
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL STYLING -->
+    <style>
+    /* Modal Base Styles */
+    .info-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+        position: relative;
+        background-color: #2a2a2a;
+        border: 1px solid #4a4a4a;
+        border-radius: 8px;
+        padding: 35px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        z-index: 10001;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: #888888;
+        font-size: 32px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 35px;
+        height: 35px;
+        transition: color 0.2s;
+        z-index: 10002;
+    }
+
+    .modal-close:hover {
+        color: #ffffff;
+    }
+
+    .modal-section-title {
+        font-family: 'Georgia', serif;
+        font-size: 16px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        color: #ffffff;
+        border-bottom: 1px solid #4a4a4a;
+        padding-bottom: 8px;
+    }
+
+    .modal-text {
+        font-size: 12px;
+        line-height: 1.6;
+        color: #cccccc;
+        margin-bottom: 15px;
+    }
+
+    .modal-text strong {
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* Custom Scrollbar for Modals */
+    .modal-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 4px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+        background: #4a4a4a;
+        border-radius: 4px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        background: #666666;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .info-modal {
+            padding: 10px;
+        }
+        
+        .modal-content {
+            padding: 25px 20px;
+            max-width: 100%;
+            max-height: 90vh;
+        }
+        
+        .modal-close {
+            top: 10px;
+            right: 10px;
+            font-size: 28px;
+        }
+        
+        .modal-section-title {
+            font-size: 15px;
+        }
+        
+        .modal-text {
+            font-size: 11px;
+        }
+    }
+
+    /* Prevent body scroll when modal open */
+    body.modal-open {
+        overflow: hidden;
+    }
+    </style>
+
+    <!-- MODAL JAVASCRIPT -->
+    <script>
+    // Legal Modal Functions
+    function showLegalModal() {
+        document.getElementById('legal-modal').style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    function closeLegalModal() {
+        document.getElementById('legal-modal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
+    // Contact Modal Functions
+    function showContactModal() {
+        document.getElementById('contact-modal').style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    function closeContactModal() {
+        document.getElementById('contact-modal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+        // Reset form
+        document.getElementById('contact-form').reset();
+        document.getElementById('form-status').innerHTML = '';
+    }
+
+    // Handle Contact Form Submission
+    function handleContactSubmit(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('contact-name').value;
+        const email = document.getElementById('contact-email').value;
+        const message = document.getElementById('contact-message').value;
+        const submitBtn = document.getElementById('submit-btn');
+        const formStatus = document.getElementById('form-status');
+        
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.style.backgroundColor = '#444444';
+        
+        // OPTION 1: Simple mailto (works immediately - REPLACE EMAIL ADDRESS)
+        const subject = encodeURIComponent('Days by Diet Contact Form');
+        const body = encodeURIComponent(
+            `Name: ${name}\n` +
+            `Email: ${email}\n\n` +
+            `Message:\n${message}\n\n` +
+            `---\n` +
+            `Sent from Days by Diet contact form`
+        );
+        
+        window.location.href = `mailto:contact@daysbydiet.com?subject=${subject}&body=${body}`;
+        
+        formStatus.innerHTML = '<span style="color: #88cc88;">✓ Opening your email client...</span>';
+        
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            submitBtn.style.backgroundColor = '#660000';
+        }, 3000);
+        
+        /* 
+        // OPTION 2: Formspree Integration (Better user experience)
+        // Sign up at https://formspree.io (free 50 submissions/month)
+        // Create a form and replace YOUR-FORM-ID below
+        
+        fetch('https://formspree.io/f/YOUR-FORM-ID', {
+            method: 'POST',
+            body: new FormData(event.target),
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                formStatus.innerHTML = '<span style="color: #88cc88;">✓ Message sent successfully! We\'ll respond within 48 hours.</span>';
+                document.getElementById('contact-form').reset();
+            } else {
+                throw new Error('Form submission failed');
+            }
+        })
+        .catch(error => {
+            formStatus.innerHTML = '<span style="color: #cc8888;">✗ Error sending. Please try again.</span>';
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            submitBtn.style.backgroundColor = '#660000';
+        });
+        */
+    }
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLegalModal();
+            closeContactModal();
+        }
+    });
+
+    // Prevent modal content clicks from closing modal
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.modal-content').forEach(content => {
+            content.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    });
     </script>
      
 </body>
