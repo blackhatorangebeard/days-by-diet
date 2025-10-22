@@ -555,7 +555,99 @@
             // RESTAURANT/TAKEAWAY ITEMS
             'mcdonalds': -8, 'kfc': -8, 'subway': -3, 'pizza hut': -7,
             'chinese takeaway': -3, 'fish and chips shop': -6,
-            'thai food': 1, 'japanese food': 2, 'mediterranean food': 4
+            'thai food': 1, 'japanese food': 2, 'mediterranean food': 4,
+
+            // SEAFOOD & SHELLFISH (high priority additions)
+            'mussels': 7, 'mussel': 7, 'green mussels': 7, 'green lipped mussels': 7,
+            'oysters': 7, 'oyster': 7, 'pacific oysters': 7,
+            'clams': 6, 'clam': 6, 'littleneck clams': 6,
+            'scallops': 6, 'scallop': 6, 'sea scallops': 6,
+            'prawns': 5, 'prawn': 5, 'shrimp': 5, 'king prawns': 5,
+            'crab': 5, 'crab meat': 5, 'blue crab': 5,
+            'lobster': 5, 'rock lobster': 5,
+            'squid': 4, 'calamari': 4,
+            'octopus': 4,
+
+            // BREAD VARIATIONS & TOAST COMBINATIONS
+            'wholegrain toast': 2, 'whole grain toast': 2,
+            'pieces of wholegrain toast': 2, 'piece of wholegrain toast': 2,
+            'multigrain bread': 2, 'multigrain toast': 2,
+            'rye bread': 1, 'rye toast': 1,
+            'sourdough toast': -1,
+            'toast with peanut butter': 2, 'peanut butter on toast': 2,
+            'toast with butter': -1, 'buttered toast': -1,
+            'toast with jam': -3, 'jam on toast': -4,
+            'toast with avocado': 4, 'avocado toast': 4, 'avocado on toast': 4,
+
+            // CRACKERS & CRACKER COMBINATIONS
+            'wholegrain crackers': 0, 'whole wheat crackers': 0,
+            'crackers with tuna': 3, 'tuna on crackers': 3,
+            'crackers with cheese': -1, 'cheese on crackers': -1,
+            'crackers with peanut butter': 1,
+            'tin of tuna': 5, 'can of tuna': 5, 'tinned tuna': 5, 'canned tuna': 5,
+
+            // PROTEIN POWDER VARIETIES (for affiliate promotion)
+            'protein powder': 2, 'protein shake': 2,
+            'whey protein': 2, 'whey isolate': 2, 'whey protein isolate': 2,
+            'plant based protein': 3, 'plant protein': 3, 'vegan protein': 3,
+            'pea protein': 3, 'rice protein': 2, 'hemp protein': 3,
+            'casein protein': 2, 'casein': 2,
+            'collagen powder': 2, 'collagen peptides': 2, 'collagen supplement': 2,
+
+            // VITAMIN B COMPLEX (missing for affiliate)
+            'vitamin b': 2, 'vit b': 2, 'b vitamin': 2,
+            'vitamin b complex': 2, 'b complex': 2, 'b-complex': 2,
+            'vitamin b1': 1, 'thiamine': 1,
+            'vitamin b2': 1, 'riboflavin': 1,
+            'vitamin b3': 1, 'niacin': 1,
+            'vitamin b5': 1, 'pantothenic acid': 1,
+            'vitamin b6': 1, 'pyridoxine': 1,
+            'vitamin b7': 1, 'biotin': 1,
+            'vitamin b9': 1, 'folate': 1, 'folic acid': 1,
+
+            // ADDITIONAL HIGH-VALUE SUPPLEMENTS FOR AFFILIATE
+            'collagen': 2, 'marine collagen': 2, 'bovine collagen': 2,
+            'glucosamine': 2, 'glucosamine chondroitin': 2,
+            'joint support': 2, 'joint supplement': 2,
+            'fiber supplement': 2, 'psyllium husk': 2, 'fiber powder': 2,
+            'digestive enzymes': 2, 'enzyme supplement': 2,
+            'probiotic': 3, 'probiotic supplement': 3,
+            'electrolytes': 1, 'electrolyte powder': 1, 'electrolyte supplement': 1,
+            'melatonin': 1, 'sleep supplement': 1, 'sleep aid': 1,
+            'green powder': 3, 'greens powder': 3, 'superfood powder': 3,
+            'wheatgrass': 3, 'wheatgrass powder': 3,
+            'maca powder': 2, 'maca': 2, 'maca root': 2,
+            'moringa': 3, 'moringa powder': 3,
+            'acai': 4, 'acai powder': 4, 'acai berry': 4,
+
+            // ADDITIONAL MINERALS & VITAMINS FOR COMPLETENESS
+            'selenium': 1, 'chromium': 1, 'copper': 1, 'manganese': 1,
+            'potassium': 1, 'vitamin a': 2, 'beta carotene': 2,
+            'lutein': 2, 'zeaxanthin': 2,
+
+            // HEALTHY FATS & OILS
+            'flaxseed oil': 3, 'flax oil': 3,
+            'cod liver oil': 4,
+            'krill oil': 4,
+            'evening primrose oil': 2,
+            'black seed oil': 2, 'black cumin oil': 2,
+
+            // ADDITIONAL SEAFOOD PREPARATIONS
+            'smoked salmon': 5, 'lox': 5,
+            'smoked mackerel': 5, 'smoked fish': 4,
+            'fish fingers': -3, 'fish sticks': -3,
+            'grilled fish': 5, 'baked fish': 5, 'steamed fish': 6,
+
+            // MUSHROOM VARIETIES
+            'mushrooms': 3, 'mushroom': 3, 'button mushrooms': 3,
+            'portobello mushrooms': 3, 'portobello': 3,
+            'shiitake mushrooms': 4, 'shiitake': 4,
+            'oyster mushrooms': 3, 'enoki mushrooms': 3,
+
+            // COMMON TYPOS & VARIATIONS
+            'musles': 7,
+            'protien powder': 2,
+            'suppliment': 2
         };
 
         // ENHANCED DOSE-RESPONSE CURVES (from original system)
@@ -977,6 +1069,161 @@
             summaryList.appendChild(summaryItem);
         }
 
+        // ========================================
+        // AUTOCOMPLETE FUNCTIONALITY
+        // ========================================
+
+        // FIND MATCHING FOODS FROM DATABASE
+        function findMatchingFoods(input, maxResults = 5) {
+            if (!input || input.length < 2) return [];
+            
+            const searchTerm = input.toLowerCase().trim();
+            const matches = [];
+            
+            // Get all food items from database
+            for (const [food, score] of Object.entries(foodDatabase)) {
+                if (food.includes(searchTerm)) {
+                    // Calculate relevance score (exact start match = higher priority)
+                    const startsWithMatch = food.startsWith(searchTerm);
+                    const relevance = startsWithMatch ? 100 : 50;
+                    
+                    matches.push({
+                        food: food,
+                        score: score,
+                        relevance: relevance
+                    });
+                }
+            }
+            
+            // Sort by relevance then by food name length (shorter = more likely what they want)
+            matches.sort((a, b) => {
+                if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+                return a.food.length - b.food.length;
+            });
+            
+            return matches.slice(0, maxResults);
+        }
+
+        // HIGHLIGHT MATCHING TEXT
+        function highlightMatch(text, searchTerm) {
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="autocomplete-match">$1</span>');
+        }
+
+        // SHOW AUTOCOMPLETE SUGGESTIONS
+        function showAutocompleteSuggestions(input, suggestions) {
+            // Remove existing suggestions
+            const existingSuggestions = input.parentElement.querySelector('.autocomplete-suggestions');
+            if (existingSuggestions) {
+                existingSuggestions.remove();
+            }
+            
+            if (suggestions.length === 0) return;
+            
+            // Create suggestions container
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'autocomplete-suggestions';
+            suggestionsDiv.style.width = input.offsetWidth + 'px';
+            suggestionsDiv.style.left = input.offsetLeft + 'px';
+            suggestionsDiv.style.top = (input.offsetTop + input.offsetHeight) + 'px';
+            
+            // Add suggestions
+            suggestions.forEach((match, index) => {
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.className = 'autocomplete-suggestion';
+                
+                const highlightedText = highlightMatch(match.food, input.value.trim());
+                const scoreColor = match.score > 0 ? '#88cc88' : match.score < 0 ? '#cc8888' : '#cccccc';
+                
+                suggestionDiv.innerHTML = `
+                    ${highlightedText}
+                    <span style="float: right; font-size: 11px; color: ${scoreColor};">
+                        ${match.score > 0 ? '+' : ''}${match.score} min
+                    </span>
+                `;
+                
+                // Click handler
+                suggestionDiv.addEventListener('click', () => {
+                    input.value = match.food;
+                    suggestionsDiv.remove();
+                    input.focus();
+                });
+                
+                suggestionsDiv.appendChild(suggestionDiv);
+            });
+            
+            // Insert after input's parent
+            input.parentElement.style.position = 'relative';
+            input.parentElement.appendChild(suggestionsDiv);
+            suggestionsDiv.style.display = 'block';
+        }
+
+        // ATTACH AUTOCOMPLETE TO ALL FOOD INPUTS
+        function attachAutocompleteToInputs() {
+            const foodInputs = document.querySelectorAll('.food-item-input');
+            
+            foodInputs.forEach(input => {
+                // Skip meal headers
+                if (input.closest('.meal-header')) return;
+                
+                let debounceTimer;
+                
+                input.addEventListener('input', function(e) {
+                    clearTimeout(debounceTimer);
+                    
+                    debounceTimer = setTimeout(() => {
+                        const value = e.target.value;
+                        
+                        if (value.length >= 2) {
+                            const matches = findMatchingFoods(value);
+                            showAutocompleteSuggestions(e.target, matches);
+                        } else {
+                            // Hide suggestions if input too short
+                            const suggestions = e.target.parentElement.querySelector('.autocomplete-suggestions');
+                            if (suggestions) suggestions.remove();
+                        }
+                    }, 300); // Wait 300ms after user stops typing
+                });
+                
+                // Hide suggestions on blur (after a small delay to allow clicking)
+                input.addEventListener('blur', function(e) {
+                    setTimeout(() => {
+                        const suggestions = e.target.parentElement.querySelector('.autocomplete-suggestions');
+                        if (suggestions) suggestions.remove();
+                    }, 200);
+                });
+                
+                // Keyboard navigation (Arrow keys + Enter)
+                input.addEventListener('keydown', function(e) {
+                    const suggestions = e.target.parentElement.querySelector('.autocomplete-suggestions');
+                    if (!suggestions) return;
+                    
+                    const selected = suggestions.querySelector('.autocomplete-suggestion.selected');
+                    
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        if (selected && selected.nextElementSibling) {
+                            selected.classList.remove('selected');
+                            selected.nextElementSibling.classList.add('selected');
+                        } else {
+                            const first = suggestions.querySelector('.autocomplete-suggestion');
+                            if (first) first.classList.add('selected');
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        if (selected && selected.previousElementSibling) {
+                            selected.classList.remove('selected');
+                            selected.previousElementSibling.classList.add('selected');
+                        }
+                    } else if (e.key === 'Enter' && selected) {
+                        e.preventDefault();
+                        selected.click();
+                    } else if (e.key === 'Escape') {
+                        suggestions.remove();
+                    }
+                });
+            });
+        }
 
         // Add event listeners to existing inputs
         document.addEventListener('DOMContentLoaded', function() {
@@ -1015,6 +1262,23 @@
                     }, 50);
                 });
             });
+            
+            // Initialize autocomplete system
+            attachAutocompleteToInputs();
+            
+            // Also attach to newly created rows by overriding the addNewRowAfter function
+            const originalAddNewRowAfter = window.addNewRowAfter;
+            if (originalAddNewRowAfter) {
+                window.addNewRowAfter = function(currentRow) {
+                    const newRow = originalAddNewRowAfter.call(this, currentRow);
+                    // Attach autocomplete to the new input
+                    const newInput = newRow.querySelector('.food-item-input');
+                    if (newInput && !newRow.classList.contains('meal-header')) {
+                        attachAutocompleteToInputs();
+                    }
+                    return newRow;
+                };
+            }
         });
     </script>
 
@@ -1654,6 +1918,56 @@
     /* Prevent body scroll when modal open */
     body.modal-open {
         overflow: hidden;
+    }
+
+    /* AUTOCOMPLETE SUGGESTIONS STYLING */
+    .autocomplete-suggestions {
+        position: absolute;
+        background-color: #1a1a1a;
+        border: 1px solid #4a4a4a;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .autocomplete-suggestion {
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #cccccc;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    
+    .autocomplete-suggestion:last-child {
+        border-bottom: none;
+    }
+    
+    .autocomplete-suggestion:hover,
+    .autocomplete-suggestion.selected {
+        background-color: #3a3a3a;
+        color: #ffffff;
+    }
+    
+    .autocomplete-match {
+        font-weight: 600;
+        color: #88cc88;
+    }
+    
+    .autocomplete-suggestions::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .autocomplete-suggestions::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+    
+    .autocomplete-suggestions::-webkit-scrollbar-thumb {
+        background: #4a4a4a;
+        border-radius: 3px;
     }
     </style>
 
