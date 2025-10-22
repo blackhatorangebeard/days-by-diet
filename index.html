@@ -1080,11 +1080,22 @@
             const searchTerm = input.toLowerCase().trim();
             const matches = [];
             
+            // Extract potential food name from quantity + food combinations
+            // Pattern: number + space + food (e.g., "6 oysters" -> "oysters")
+            const quantityFoodPattern = /^\d+(\.\d+)?\s+(.+)$/;
+            const quantityMatch = searchTerm.match(quantityFoodPattern);
+            
+            let foodSearchTerm = searchTerm;
+            if (quantityMatch) {
+                // If it matches quantity + food pattern, search for just the food part
+                foodSearchTerm = quantityMatch[2].trim();
+            }
+            
             // Get all food items from database
             for (const [food, score] of Object.entries(foodDatabase)) {
-                if (food.includes(searchTerm)) {
+                if (food.includes(foodSearchTerm)) {
                     // Calculate relevance score (exact start match = higher priority)
-                    const startsWithMatch = food.startsWith(searchTerm);
+                    const startsWithMatch = food.startsWith(foodSearchTerm);
                     const relevance = startsWithMatch ? 100 : 50;
                     
                     matches.push({
@@ -1106,7 +1117,16 @@
 
         // HIGHLIGHT MATCHING TEXT
         function highlightMatch(text, searchTerm) {
-            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            // Extract food part if there's a quantity
+            const quantityFoodPattern = /^\d+(\.\d+)?\s+(.+)$/;
+            const quantityMatch = searchTerm.match(quantityFoodPattern);
+            
+            let foodSearchTerm = searchTerm;
+            if (quantityMatch) {
+                foodSearchTerm = quantityMatch[2].trim();
+            }
+            
+            const regex = new RegExp(`(${foodSearchTerm})`, 'gi');
             return text.replace(regex, '<span class="autocomplete-match">$1</span>');
         }
 
