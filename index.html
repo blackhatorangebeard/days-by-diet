@@ -1159,7 +1159,20 @@
                 
                 // Click handler
                 suggestionDiv.addEventListener('click', () => {
-                    input.value = match.food;
+                    // Check if there's a quantity in the current input
+                    const currentValue = input.value.trim();
+                    const quantityFoodPattern = /^(\d+(?:\.\d+)?)\s+(.+)$/;
+                    const quantityMatch = currentValue.match(quantityFoodPattern);
+                    
+                    if (quantityMatch) {
+                        // Preserve quantity and replace only the food part
+                        const quantity = quantityMatch[1];
+                        input.value = `${quantity} ${match.food}`;
+                    } else {
+                        // No quantity, just replace with food name
+                        input.value = match.food;
+                    }
+                    
                     suggestionsDiv.remove();
                     input.focus();
                 });
@@ -1232,7 +1245,23 @@
                         }
                     } else if (e.key === 'Enter' && selected) {
                         e.preventDefault();
-                        selected.click();
+                        // Check if there's a quantity in the current input
+                        const currentValue = e.target.value.trim();
+                        const quantityFoodPattern = /^(\d+(?:\.\d+)?)\s+(.+)$/;
+                        const quantityMatch = currentValue.match(quantityFoodPattern);
+                        
+                        if (quantityMatch) {
+                            // Preserve quantity and replace only the food part
+                            const quantity = quantityMatch[1];
+                            const foodName = selected.textContent.trim();
+                            e.target.value = `${quantity} ${foodName}`;
+                        } else {
+                            // No quantity, just replace with food name
+                            e.target.value = selected.textContent.trim();
+                        }
+                        
+                        suggestions.remove();
+                        e.target.focus();
                     } else if (e.key === 'Escape') {
                         suggestions.remove();
                     }
