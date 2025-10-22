@@ -1135,12 +1135,7 @@
                 const highlightedText = highlightMatch(match.food, input.value.trim());
                 const scoreColor = match.score > 0 ? '#88cc88' : match.score < 0 ? '#cc8888' : '#cccccc';
                 
-                suggestionDiv.innerHTML = `
-                    ${highlightedText}
-                    <span style="float: right; font-size: 11px; color: ${scoreColor};">
-                        ${match.score > 0 ? '+' : ''}${match.score} min
-                    </span>
-                `;
+                suggestionDiv.innerHTML = `${highlightedText}`;
                 
                 // Click handler
                 suggestionDiv.addEventListener('click', () => {
