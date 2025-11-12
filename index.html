@@ -1086,20 +1086,172 @@
                 document.getElementById('equivalentTime').textContent = `${hours > 0 ? '+' : ''}${hours} ${Math.abs(hours) === 1 ? 'hour' : 'hours'}`;
             }
 
-            // Update summary
+            // Update summary with motivational messaging
+            updateMotivationalSummary(dailyPoints, equivalentDays);
+        }
+
+        // NEW FUNCTION: Generate motivational summary with actionable suggestions
+        function updateMotivationalSummary(dailyPoints, equivalentDays) {
             const summaryList = document.getElementById('summaryList');
             summaryList.innerHTML = '';
-            const summaryItem = document.createElement('li');
             
-            if (equivalentDays > 0) {
-                summaryItem.textContent = `would gain over ${Math.abs(equivalentDays)} days of life per year`;
-            } else if (equivalentDays < 0) {
-                summaryItem.textContent = `would lose over ${Math.abs(equivalentDays)} days of life per year`;
-            } else {
-                summaryItem.textContent = `no significant impact on life expectancy`;
+            // POSITIVE RESULTS - Celebrate and encourage
+            if (dailyPoints > 0) {
+                // Main message
+                const mainMessage = document.createElement('li');
+                mainMessage.style.color = '#88cc88';
+                mainMessage.style.fontWeight = '500';
+                
+                if (equivalentDays >= 7) {
+                    mainMessage.textContent = `Excellent work! Based on today's diet, you could add ${Math.abs(equivalentDays)} days to your life this year. Keep it up!`;
+                } else if (equivalentDays >= 3) {
+                    mainMessage.textContent = `Great choices today! You're on track to add ${Math.abs(equivalentDays)} days to your life this year.`;
+                } else if (equivalentDays >= 1) {
+                    mainMessage.textContent = `Good work! Today's diet is positively affecting your health - adding ${Math.abs(equivalentDays)} days annually.`;
+                } else {
+                    const hours = Math.round((dailyPoints * 365) / 60);
+                    mainMessage.textContent = `Positive day! Today's choices could add ${hours} hours to your life this year.`;
+                }
+                
+                summaryList.appendChild(mainMessage);
+                
+                // Encouragement for continued improvement
+                const encouragement = document.createElement('li');
+                encouragement.style.fontSize = '12px';
+                encouragement.textContent = 'Small consistent improvements compound into significant health benefits over time.';
+                summaryList.appendChild(encouragement);
             }
             
-            summaryList.appendChild(summaryItem);
+            // NEGATIVE RESULTS - Supportive suggestions for improvement
+            else if (dailyPoints < 0) {
+                // Main message - empathetic and action-oriented
+                const mainMessage = document.createElement('li');
+                mainMessage.style.color = '#cccccc';
+                mainMessage.style.fontWeight = '500';
+                
+                if (Math.abs(equivalentDays) >= 14) {
+                    mainMessage.textContent = `Based on today's diet, you could lose ${Math.abs(equivalentDays)} days this year. The good news? Small changes make a big difference.`;
+                } else if (Math.abs(equivalentDays) >= 7) {
+                    mainMessage.textContent = `Today's choices could cost ${Math.abs(equivalentDays)} days this year, but you have the power to turn this around.`;
+                } else if (Math.abs(equivalentDays) >= 1) {
+                    mainMessage.textContent = `Based on today's diet, you could lose ${Math.abs(equivalentDays)} days this year. Let's look at what could help:`;
+                } else {
+                    const hours = Math.round(Math.abs(dailyPoints) * 365 / 60);
+                    mainMessage.textContent = `Today's choices could cost ${hours} hours this year. Here's how to improve:`;
+                }
+                
+                summaryList.appendChild(mainMessage);
+                
+                // Generate personalized suggestions based on what they ate
+                const suggestions = generateSmartSuggestions(dailyPoints);
+                suggestions.forEach(suggestion => {
+                    const li = document.createElement('li');
+                    li.style.fontSize = '12px';
+                    li.style.color = '#aaaaaa';
+                    li.innerHTML = `→ ${suggestion}`;
+                    summaryList.appendChild(li);
+                });
+            }
+            
+            // NEUTRAL RESULTS
+            else {
+                const neutralMessage = document.createElement('li');
+                neutralMessage.textContent = 'Today\'s diet is neutral. Small additions of healthy foods could push this into positive territory.';
+                summaryList.appendChild(neutralMessage);
+                
+                const tip = document.createElement('li');
+                tip.style.fontSize = '12px';
+                tip.textContent = '→ Try adding leafy greens, berries, or nuts to your next meal for an easy boost.';
+                summaryList.appendChild(tip);
+            }
+        }
+
+        // NEW FUNCTION: Generate smart, personalized suggestions based on their actual food entries
+        function generateSmartSuggestions(dailyPoints) {
+            const tbody = document.getElementById('foodTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            let hasProcessedFoods = false;
+            let hasSugaryDrinks = false;
+            let hasUltraProcessed = false;
+            let lacksFruitsVeggies = true;
+            let lacksHealthyFats = true;
+            
+            // Analyze what they ate
+            rows.forEach(row => {
+                const input = row.querySelector('.food-item-input');
+                if (input && input.value && !row.classList.contains('meal-header')) {
+                    const foodInput = input.value.toLowerCase();
+                    
+                    // Check for problem foods
+                    if (foodInput.includes('soda') || foodInput.includes('soft drink') || 
+                        foodInput.includes('coke') || foodInput.includes('energy drink')) {
+                        hasSugaryDrinks = true;
+                    }
+                    if (foodInput.includes('hot dog') || foodInput.includes('burger') || 
+                        foodInput.includes('pizza') || foodInput.includes('fries') ||
+                        foodInput.includes('donut') || foodInput.includes('candy')) {
+                        hasUltraProcessed = true;
+                    }
+                    if (foodInput.includes('white bread') || foodInput.includes('chips') ||
+                        foodInput.includes('cookie') || foodInput.includes('cake')) {
+                        hasProcessedFoods = true;
+                    }
+                    
+                    // Check for healthy foods
+                    if (foodInput.includes('spinach') || foodInput.includes('kale') || 
+                        foodInput.includes('broccoli') || foodInput.includes('carrot') ||
+                        foodInput.includes('berr') || foodInput.includes('apple') ||
+                        foodInput.includes('salad') || foodInput.includes('vegetable')) {
+                        lacksFruitsVeggies = false;
+                    }
+                    if (foodInput.includes('nuts') || foodInput.includes('salmon') || 
+                        foodInput.includes('avocado') || foodInput.includes('olive oil') ||
+                        foodInput.includes('fish')) {
+                        lacksHealthyFats = false;
+                    }
+                }
+            });
+            
+            const suggestions = [];
+            
+            // Generate targeted suggestions (max 3)
+            if (hasSugaryDrinks && suggestions.length < 3) {
+                suggestions.push('Swap sugary drinks for water or herbal tea (saves ~12 minutes per drink)');
+            }
+            
+            if (hasUltraProcessed && suggestions.length < 3) {
+                suggestions.push('Replace ultra-processed foods with whole food alternatives (adds 5-8 minutes per meal)');
+            }
+            
+            if (lacksFruitsVeggies && suggestions.length < 3) {
+                suggestions.push('Add one serving of leafy greens or berries daily (adds 7-8 minutes)');
+            }
+            
+            if (lacksHealthyFats && suggestions.length < 3) {
+                suggestions.push('Include nuts, salmon, or avocado for healthy fats (adds 5-6 minutes)');
+            }
+            
+            if (hasProcessedFoods && suggestions.length < 3) {
+                suggestions.push('Choose whole grain bread over white bread (adds 3-5 minutes per serving)');
+            }
+            
+            // Generic fallback suggestions if we haven't hit 3 yet
+            if (suggestions.length < 3) {
+                const genericSuggestions = [
+                    'Start your day with oatmeal and berries instead of processed cereals (adds 5 minutes)',
+                    'Snack on a handful of almonds instead of chips (adds 6 minutes)',
+                    'Add a side salad to lunch or dinner (adds 4-6 minutes)'
+                ];
+                
+                genericSuggestions.forEach(s => {
+                    if (suggestions.length < 3) {
+                        suggestions.push(s);
+                    }
+                });
+            }
+            
+            return suggestions.slice(0, 3); // Max 3 suggestions
         }
 
         // ========================================
