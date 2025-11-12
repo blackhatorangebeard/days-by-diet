@@ -327,9 +327,40 @@
                 width: 100%;
             }
         }
+
+        /* LOGO STYLING */
+        .logo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 15px 10px 15px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        /* MOBILE: Logo styling */
+        @media (max-width: 768px) {
+            .logo-container {
+                text-align: center;
+                padding: 15px 10px 10px 10px;
+            }
+
+            .logo {
+                height: 60px;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Days by Diet Logo -->
+    <div class="logo-container">
+        <img src="days-by-diet-logo.png" alt="Days by Diet Logo" class="logo">
+    </div>
+    
     <div class="container">
         <!-- Left Column - Food Entry -->
         <div class="left-column">
