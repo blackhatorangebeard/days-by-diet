@@ -7,6 +7,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1EWN3BS9J"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-G1EWN3BS9J', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
+      });
+    </script>
+    
     <style>
         * {
             margin: 0;
@@ -1061,6 +1075,46 @@
             
             // Log detailed breakdown for debugging
             console.log('Detailed Food Breakdown:', detailedBreakdown);
+            
+            // Track food entries for analytics
+            if (typeof gtag === 'function') {
+                // Track recognized foods
+                detailedBreakdown.forEach(item => {
+                    if (item.confidence === 'verified' || item.score !== 0) {
+                        gtag('event', 'food_entry', {
+                            'food_name': item.food.toLowerCase(),
+                            'food_score': item.score,
+                            'entry_status': 'recognized'
+                        });
+                    }
+                });
+                
+                // Track unrecognized foods
+                rows.forEach(row => {
+                    const input = row.querySelector('.food-item-input');
+                    const pointsCell = row.querySelector('.points-cell');
+                    const foodInput = input?.value.trim();
+                    
+                    if (foodInput && !row.classList.contains('meal-header')) {
+                        const cellContent = pointsCell?.innerHTML || '';
+                        const hasZeroScore = cellContent.includes('0*');
+                        
+                        if (hasZeroScore) {
+                            gtag('event', 'food_entry', {
+                                'food_name': foodInput.toLowerCase(),
+                                'food_score': 0,
+                                'entry_status': 'unrecognized'
+                            });
+                        }
+                    }
+                });
+                
+                // Track overall calculation
+                gtag('event', 'calculation_complete', {
+                    'total_score': totalPoints,
+                    'food_count': foodCount
+                });
+            }
             
             calculationDone = true;
         }
