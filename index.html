@@ -1011,113 +1011,122 @@
             };
         }
 
-        // REPLACE THE EXISTING calculateTotal() FUNCTION WITH THIS:
-        function calculateTotal() {
-            const tbody = document.getElementById('foodTableBody');
-            const rows = tbody.querySelectorAll('tr');
-            let totalPoints = 0;
-            let foodCount = 0;
-            let detailedBreakdown = [];
+        // REPLACE THE EXISTING calculateTotal() FUNCTION WITH THIS FIXED VERSION:
+       // REPLACE THE EXISTING calculateTotal() FUNCTION WITH THIS FIXED VERSION:
+function calculateTotal() {
+    const tbody = document.getElementById('foodTableBody');
+    const rows = tbody.querySelectorAll('tr');
+    let totalPoints = 0;
+    let foodCount = 0;
+    let detailedBreakdown = [];
 
-            rows.forEach(row => {
-                const input = row.querySelector('.food-item-input');
-                const pointsCell = row.querySelector('.points-cell');
-                const foodInput = input.value.trim();
+    rows.forEach(row => {
+        const input = row.querySelector('.food-item-input');
+        const pointsCell = row.querySelector('.points-cell');
+        
+        // ✅ FIX: Check if input exists before accessing .value
+        if (!input || !pointsCell) return;
+        
+        const foodInput = input.value.trim();
+        
+        if (foodInput && !row.classList.contains('meal-header')) {
+            const result = calculateFoodScore(foodInput);
+            
+            if (result.score !== 0) {
+                pointsCell.innerHTML = result.score > 0 ? 
+                    `<span style="color: #88cc88;">+${result.score}</span>` : 
+                    `<span style="color: #cc8888;">${result.score}</span>`;
                 
-                if (foodInput && !row.classList.contains('meal-header')) {
-                    const result = calculateFoodScore(foodInput);
-                    
-                    if (result.score !== 0) {
-                        pointsCell.innerHTML = result.score > 0 ? 
-                            `<span style="color: #88cc88;">+${result.score}</span>` : 
-                            `<span style="color: #cc8888;">${result.score}</span>`;
-                        
-                        // Add tooltip with breakdown
-                        pointsCell.title = result.breakdown;
-                        
-                        totalPoints += result.score;
-                        foodCount++;
-                        
-                        detailedBreakdown.push({
-                            food: foodInput,
-                            score: result.score,
-                            breakdown: result.breakdown,
-                            confidence: result.confidence
-                        });
-                    } else {
-                        pointsCell.innerHTML = `<span style="color: #666666;">0*</span>`;
-                        pointsCell.title = result.breakdown || "Item not recognized";
-                    }
-                } else if (row.classList.contains('meal-header')) {
-                    pointsCell.textContent = '';
-                }
-            });
-
-            // Add total row if not exists
-            let totalRow = tbody.querySelector('.total-row');
-            if (!totalRow) {
-                totalRow = document.createElement('tr');
-                totalRow.classList.add('total-row');
-                totalRow.innerHTML = `
-                    <td style="font-weight: bold;">TOTAL</td>
-                    <td class="points-cell" style="font-weight: bold;"></td>
-                `;
-                tbody.appendChild(totalRow);
+                // Add tooltip with breakdown
+                pointsCell.title = result.breakdown;
+                
+                totalPoints += result.score;
+                foodCount++;
+                
+                detailedBreakdown.push({
+                    food: foodInput,
+                    score: result.score,
+                    breakdown: result.breakdown,
+                    confidence: result.confidence
+                });
+            } else {
+                pointsCell.innerHTML = `<span style="color: #666666;">0*</span>`;
+                pointsCell.title = result.breakdown || "Item not recognized";
             }
-
-            // Update total with color coding
-            const totalCell = totalRow.querySelector('.points-cell');
-            const totalColor = totalPoints > 0 ? '#88cc88' : totalPoints < 0 ? '#cc8888' : '#ffffff';
-            totalCell.innerHTML = `<span style="color: ${totalColor};">${totalPoints > 0 ? '+' : ''}${totalPoints} LIFE MINUTES</span>`;
-
-            // Update annual calculations
-            updateAnnualCalculations(totalPoints);
-            
-            // Log detailed breakdown for debugging
-            console.log('Detailed Food Breakdown:', detailedBreakdown);
-            
-            // Track food entries for analytics
-            if (typeof gtag === 'function') {
-                // Track recognized foods
-                detailedBreakdown.forEach(item => {
-                    if (item.confidence === 'verified' || item.score !== 0) {
-                        gtag('event', 'food_entry', {
-                            'food_name': item.food.toLowerCase(),
-                            'food_score': item.score,
-                            'entry_status': 'recognized'
-                        });
-                    }
-                });
-                
-                // Track unrecognized foods
-                rows.forEach(row => {
-                    const input = row.querySelector('.food-item-input');
-                    const pointsCell = row.querySelector('.points-cell');
-                    const foodInput = input?.value.trim();
-                    
-                    if (foodInput && !row.classList.contains('meal-header')) {
-                        const cellContent = pointsCell?.innerHTML || '';
-                        const hasZeroScore = cellContent.includes('0*');
-                        
-                        if (hasZeroScore) {
-                            gtag('event', 'food_entry', {
-                                'food_name': foodInput.toLowerCase(),
-                                'food_score': 0,
-                                'entry_status': 'unrecognized'
-                            });
-                        }
-                    }
-                });
-                
-                // Track overall calculation
-                gtag('event', 'calculation_complete', {
-                    'total_score': totalPoints,
-                    'food_count': foodCount
-                });
-            }
-            
-            calculationDone = true;
+        } else if (row.classList.contains('meal-header')) {
+            pointsCell.textContent = '';
         }
+    });
+
+    // Add total row if not exists
+    let totalRow = tbody.querySelector('.total-row');
+    if (!totalRow) {
+        totalRow = document.createElement('tr');
+        totalRow.classList.add('total-row');
+        totalRow.innerHTML = `
+            <td style="font-weight: bold;">TOTAL</td>
+            <td class="points-cell" style="font-weight: bold;"></td>
+        `;
+        tbody.appendChild(totalRow);
+    }
+
+    // Update total with color coding
+    const totalCell = totalRow.querySelector('.points-cell');
+    const totalColor = totalPoints > 0 ? '#88cc88' : totalPoints < 0 ? '#cc8888' : '#ffffff';
+    totalCell.innerHTML = `<span style="color: ${totalColor};">${totalPoints > 0 ? '+' : ''}${totalPoints} LIFE MINUTES</span>`;
+
+    // Update annual calculations
+    updateAnnualCalculations(totalPoints);
+    
+    // Log detailed breakdown for debugging
+    console.log('Detailed Food Breakdown:', detailedBreakdown);
+    
+    // Track food entries for analytics
+    if (typeof gtag === 'function') {
+        // Track recognized foods
+        detailedBreakdown.forEach(item => {
+            if (item.confidence === 'verified' || item.score !== 0) {
+                gtag('event', 'food_entry', {
+                    'food_name': item.food.toLowerCase(),
+                    'food_score': item.score,
+                    'entry_status': 'recognized'
+                });
+            }
+        });
+        
+        // Track unrecognized foods
+        rows.forEach(row => {
+            const input = row.querySelector('.food-item-input');
+            const pointsCell = row.querySelector('.points-cell');
+            
+            // ✅ FIX: Check if elements exist before accessing properties
+            if (!input || !pointsCell) return;
+            
+            const foodInput = input.value.trim();
+            
+            if (foodInput && !row.classList.contains('meal-header')) {
+                const cellContent = pointsCell.innerHTML || '';
+                const hasZeroScore = cellContent.includes('0*');
+                
+                if (hasZeroScore) {
+                    gtag('event', 'food_entry', {
+                        'food_name': foodInput.toLowerCase(),
+                        'food_score': 0,
+                        'entry_status': 'unrecognized'
+                    });
+                }
+            }
+        });
+        
+        // Track overall calculation
+        gtag('event', 'calculation_complete', {
+            'total_score': totalPoints,
+            'food_count': foodCount
+        });
+    }
+    
+    calculationDone = true;
+}
 
         function updateAnnualCalculations(dailyPoints) {
             // Calculate all time periods
